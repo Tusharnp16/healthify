@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthify/home.dart';
 import 'package:healthify/login.dart';
+import 'package:healthify/navigation_menu.dart';
 
 void main() {
   runApp(const MyApp());

@@ -1,40 +1,63 @@
-// /*
-// import 'dart:ffi';
-//
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter/material.dart';
-// import 'package:healthify/login.dart';
-//
-// class NavigationMenu extends StatelessWidget {
-//   const NavigationMenu({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final controller = Get.put(NavigationController());
-//
-//    return Scaffold(
-//      bottomNavigationBar: Obx(
-//          ()=>NavigationBar(
-//            height: 80,
-//            elevation: 0,
-//            selectedIndex: controller.selectedindex.value,
-//            onDestinationSelected: (index) => controller.selectedindex.value=index,
-//            destinations: const[
-//              NavigationDestination(icon: Icon(CupertinoIcons.home), label: "Home"),
-//              NavigationDestination(icon: Icon(Icons.local_hospital_outlined), label: "Hospital"),
-//              NavigationDestination(icon: Icon(Icons.person_2_outlined), label: "Doctor"),
-//              NavigationDestination(icon: Icon(Icons.more_horiz), label: "More")
-//            ],
-//          )
-//      ),
-//      body: Obx(() => controller.screens[controller.selectedindex.value]),
-//    );
-//   }
-//
-// }
-//
-// class NavigationController extends GetxController{
-//   final Rx<int> selectedindex=0
-//
-//       final screens=[Container(color: Colors.purple,),Container(color: Colors.green,),Container(color: Colors.red,),Container(color: Colors.yellow,)]
-// }*/
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:healthify/doctor.dart';
+import 'package:healthify/home.dart';
+import 'package:healthify/hospital.dart';
+import 'package:healthify/login.dart';
+import 'package:healthify/profile.dart';
+
+class NavigationMenu extends StatefulWidget {
+  const NavigationMenu({super.key});
+  @override
+  State<NavigationMenu> createState() => _NavigationMenuState();
+}
+
+class _NavigationMenuState extends State<NavigationMenu> {
+  int _selectedIndex = 0;
+  List<Widget> widgetOptions = <Widget>[
+    home(),
+    doctor(),
+    hospital(),
+    profile()
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+    body:Center(
+        child: widgetOptions.elementAt(_selectedIndex),
+    ),
+      bottomNavigationBar:
+      Container(
+        margin: EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+        child: Padding(
+          padding: EdgeInsets.zero,
+                      child: GNav(
+                            color: Colors.black,
+                            backgroundColor: Colors.white60,
+                            tabBackgroundColor: Colors.purpleAccent,
+                            activeColor: Colors.black,
+                            duration: Duration(milliseconds: 500),
+                            gap: 8,
+                           tabActiveBorder: Border.all(color: Colors.black, width: 2), // tab button border
+                           tabBorder: Border.all(color: Colors.grey, width: 1),
+                            tabs: const [
+                              GButton(icon: Icons.home,text: "Home",),
+                              GButton(icon: Icons.local_hospital_outlined,text: "Hospital"),
+                              GButton(icon: Icons.person,text: "Doctor"),
+                              GButton(icon: Icons.more_horiz_outlined,text: "Profile"),
+                            ],
+                            selectedIndex: _selectedIndex,
+                            onTabChange: (index) {
+                              setState(() {
+                                _selectedIndex = index;
+                              });
+                            }
+                          ),
+                  ),
+      ),
+        );
+  }
+}
+

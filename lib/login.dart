@@ -94,7 +94,7 @@ class loginscreen extends StatelessWidget{
                           ),
                           onPressed: () {
                             Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => home()),);
+                                MaterialPageRoute(builder: (context) => const NavigationMenu()),);
                           },
                         ),
                       ),
