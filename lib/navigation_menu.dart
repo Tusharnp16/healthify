@@ -30,7 +30,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
     ),
       bottomNavigationBar:
       Container(
-        margin: EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+        margin: EdgeInsets.symmetric(vertical: 15,horizontal: 5),
         child: Padding(
           padding: EdgeInsets.zero,
                       child: GNav(
@@ -41,7 +41,6 @@ class _NavigationMenuState extends State<NavigationMenu> {
                             duration: Duration(milliseconds: 500),
                             gap: 8,
                            tabActiveBorder: Border.all(color: Colors.black, width: 2), // tab button border
-                           tabBorder: Border.all(color: Colors.grey, width: 1),
                             tabs: const [
                               GButton(icon: Icons.home,text: "Home",),
                               GButton(icon: Icons.local_hospital_outlined,text: "Hospital"),

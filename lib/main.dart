@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healthify/home.dart';
 import 'package:healthify/login.dart';
 import 'package:healthify/navigation_menu.dart';
+import 'package:healthify/signup.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
-      ),      home:const loginscreen(),
+      ),      home: signup(),
     );
   }
 }

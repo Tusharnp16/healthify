@@ -10,6 +10,7 @@ class loginscreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           Container(
@@ -42,7 +43,7 @@ class loginscreen extends StatelessWidget{
                 child: Padding(
                   padding: const EdgeInsets.only(top: 30,left:8,right: 8),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const TextField(
                           decoration: InputDecoration(
@@ -98,57 +99,77 @@ class loginscreen extends StatelessWidget{
                           },
                         ),
                       ),
-                        const SizedBox(height: 10,),
-                        const Align(
-                        alignment: Alignment.bottomRight,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text("Don't Register Yet? ",style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black87,
-                            ),), Text("Sign Up",style: TextStyle(fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                                color: Colors.red),),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20,),
-                      const Text("---Or Log In---",
-                          style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),),
+
+                      const SizedBox(height: 25,),
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.center,
+                         children: [
+                           const Divider(
+                             color: Colors.red,
+                             height: 10,
+                             thickness: 10,
+                           ),
+                           const Text("Or continue with",
+                             style: TextStyle(
+                                 fontSize: 18,
+                                 color: Colors.black,
+                                 fontWeight: FontWeight.bold),),
+                           Container(
+                             height: 5,
+                             color: Colors.purpleAccent,
+                           ),
+                         ],
+                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                                width : 50,
-                                height: 50,
+                                width : 40,
+                                height: 40,
                                 child: Image.asset('assets/images/fblogo.png')),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
-                                width : 50,
-                                height: 50,
+                                width : 40,
+                                height: 40,
                                 child: Image.asset('assets/images/instagram.png')),
                           ),
                            Container(
-                              width : 50,
-                              height: 50,
+                              width : 40,
+                              height: 40,
                               child: Image.asset('assets/images/mobile-phone.png')),
-
                         ],
-
                       ),
+                      const SizedBox(height: 10,),
                     ],
                   ),
                 ),
               ),
             ),
-          )
+          ),
+          const Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Don't have an account? ",style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),), Text("Create account",style: TextStyle(fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Colors.red),),
+                    ],
+                  ),
+              ),
+            ],
+          ),
         ],
+
+
       ),
     );
   }
