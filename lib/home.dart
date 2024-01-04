@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -49,8 +51,9 @@ class home extends StatelessWidget {
                         child: ClipOval(
                             child: Image.asset("assets/images/admin.jpg")))
                   ],
-                ),
+                ),Divider(),
                 Card(
+                  elevation: 20,
                   child: Column(
                     children: [
                       Container(
@@ -151,127 +154,169 @@ class home extends StatelessWidget {
                 const SizedBox(
                   height: 5,
                 ),
-                SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          height: 190,
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child:  Padding(
-                            padding: const EdgeInsets.all(3.0),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height:140,
-                                  width: double.infinity,
-                                  child:
-                                  Image.asset("assets/images/Hospi.png"),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Card(
+                            elevation: 10,
+                            child: Container(
+                              height: 190,
+                              width: double.infinity,
+                              decoration: const BoxDecoration(
+                                color: Colors.white54,
+                                borderRadius: BorderRadius.all(Radius.circular(15)),
+                              ),
+                              child:  Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height:140,
+                                      width: double.infinity,
+                                      child:
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: SizedBox.fromSize(
+                                            size: Size.fromRadius(48), // Image radius
+                                            child: Image.asset("assets/images/Hospi.png",fit: BoxFit.fitWidth)
+                                        ),
+                                    ),
+                                    ),
+                                    SizedBox(height: 2,),
+                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify tonybhai",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),))
+                                  ],
                                 ),
-                                SizedBox(height: 2,),
-                                const Expanded(child: Text("New hospital in surat inaugrate by founder of healthify tonybhai",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),))
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          height: 190,
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child:  Padding(
-                            padding: const EdgeInsets.all(3.0),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height:140,
-                                  width: double.infinity,
-                                  child:
-                                  Image.asset("assets/images/Hospi.png"),
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Card(
+                            elevation: 10,
+                            child: Container(
+                              height: 190,
+                              width: double.infinity,
+                              decoration: const BoxDecoration(
+                                color: Colors.white54,
+                                borderRadius: BorderRadius.all(Radius.circular(15)),
+                              ),
+                              child:  Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height:140,
+                                      width: double.infinity,
+                                      child:
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: SizedBox.fromSize(
+                                            size: Size.fromRadius(48), // Image radius
+                                            child: Image.asset("assets/images/Hospi.png",fit: BoxFit.fitWidth)
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 2,),
+                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify tonybhai",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),))
+                                  ],
                                 ),
-                                SizedBox(height: 2,),
-                                const Expanded(child: Text("New hospital in surat inaugrate by founder of healthify tonybhai",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),))
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          height: 190,
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child:  Padding(
-                            padding: const EdgeInsets.all(3.0),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height:140,
-                                  width: double.infinity,
-                                  child:
-                                  Image.asset("assets/images/Hospi.png"),
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Card(
+                            elevation: 10,
+                            child: Container(
+                              height: 190,
+                              width: double.infinity,
+                              decoration: const BoxDecoration(
+                                color: Colors.white54,
+                                borderRadius: BorderRadius.all(Radius.circular(15)),
+                              ),
+                              child:  Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height:140,
+                                      width: double.infinity,
+                                      child:
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: SizedBox.fromSize(
+                                            size: Size.fromRadius(48), // Image radius
+                                            child: Image.asset("assets/images/Hospi.png",fit: BoxFit.fitWidth)
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 2,),
+                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify tonybhai",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),))
+                                  ],
                                 ),
-                                SizedBox(height: 2,),
-                                const Expanded(child: Text("New hospital in surat inaugrate by founder of healthify tonybhai",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),))
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Container(
-                          height: 190,
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                          ),
-                          child:  Padding(
-                            padding: const EdgeInsets.all(3.0),
-                            child: Column(
-                              children: [
-                                Container(
-                                  height:140,
-                                  width: double.infinity,
-                                  child:
-                                  Image.asset("assets/images/Hospi.png"),
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Card(
+                            elevation: 10,
+                            child: Container(
+                              height: 190,
+                              width: double.infinity,
+                              decoration: const BoxDecoration(
+                                color: Colors.white54,
+                                borderRadius: BorderRadius.all(Radius.circular(15)),
+                              ),
+                              child:  Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height:140,
+                                      width: double.infinity,
+                                      child:
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                        child: SizedBox.fromSize(
+                                            size: Size.fromRadius(48), // Image radius
+                                            child: Image.asset("assets/images/Hospi.png",fit: BoxFit.fitWidth)
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 2,),
+                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify tonybhai",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),))
+                                  ],
                                 ),
-                                SizedBox(height: 2,),
-                                const Expanded(child: Text("New hospital in surat inaugrate by founder of healthify tonybhai",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),))
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-
+                        Divider(),
+                      ],
+                    ),
                   ),
                 )
               ],

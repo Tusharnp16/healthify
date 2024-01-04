@@ -102,23 +102,23 @@ class loginscreen extends StatelessWidget{
                       ),
 
                       const SizedBox(height: 25,),
-                       Row(
+                      const Row(
                          mainAxisAlignment: MainAxisAlignment.center,
                          children: [
-                           const Divider(
-                             color: Colors.red,
-                             height: 10,
-                             thickness: 10,
+                           Expanded(
+                             child: Divider(
+                               endIndent: 5.0,
+                             ),
                            ),
-                           const Text("Or Continue with",
+                            Text("Or Continue with",
                              style: TextStyle(
                                  fontSize: 18,
                                  color: Colors.black,
                                  fontWeight: FontWeight.bold),),
-                           Container(
-                             height: 5,
-                             color: Colors.purpleAccent,
-                           ),
+                            Expanded(child: Divider(
+
+                             indent: 5.0,
+                           )),
                          ],
                        ),
                       Row(

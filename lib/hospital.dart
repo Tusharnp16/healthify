@@ -21,7 +21,27 @@ class hospital extends StatelessWidget{
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
                 color: Colors.lightBlue,
-              ),)
+              ),),
+            Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: Divider(
+                    color: Colors.green,
+                  ),
+                ),
+                Text("Or conttinue with",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.lightBlue,
+                  ),),
+                Expanded(child: Divider())
+              ],
+            )
+
+
           ],
         ),
       ),
