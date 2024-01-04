@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:healthify/home.dart';
 import 'package:healthify/navigation_menu.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:healthify/signup.dart';
 
 class loginscreen extends StatelessWidget{
   const loginscreen({Key? key}) : super(key: key);
@@ -109,7 +110,7 @@ class loginscreen extends StatelessWidget{
                              height: 10,
                              thickness: 10,
                            ),
-                           const Text("Or login with",
+                           const Text("Or Continue with",
                              style: TextStyle(
                                  fontSize: 18,
                                  color: Colors.black,
@@ -147,7 +148,7 @@ class loginscreen extends StatelessWidget{
               ),
             ),
           ),
-          const Column(
+           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -156,12 +157,21 @@ class loginscreen extends StatelessWidget{
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Don't have an account? ",style: TextStyle(
+                      const Text("Don't have an account? ",style: TextStyle(
                         fontSize: 15,
                         color: Colors.black87,
-                      ),), Text("Create account",style: TextStyle(fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          color: Colors.red),),
+                      ),),
+                    GestureDetector(
+                    child: const Text("Sign In",style: TextStyle(fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                            color: Colors.red
+                            ),),
+                        onTap: () {
+                          Navigator.push(context,
+                            MaterialPageRoute(builder: (
+                                context) =>  signup()),);
+                        }
+                        ),
                     ],
                   ),
               ),
