@@ -109,7 +109,7 @@ class loginscreen extends StatelessWidget{
                              height: 10,
                              thickness: 10,
                            ),
-                           const Text("Or login with",
+                           const Text("Or Continue with",
                              style: TextStyle(
                                  fontSize: 18,
                                  color: Colors.black,
