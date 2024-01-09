@@ -127,18 +127,18 @@ class loginscreen extends StatelessWidget{
                           Container(
                                 width : 40,
                                 height: 40,
-                                child: Image.asset('assets/images/fblogo.png')),
+                                child: Image.asset("assets/images/facebook.png")),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Container(
                                 width : 40,
                                 height: 40,
-                                child: Image.asset('assets/images/instagram.png')),
+                                child: Image.asset("assets/images/instagram.png")),
                           ),
                            Container(
                               width : 40,
                               height: 40,
-                              child: Image.asset('assets/images/mobile-phone.png')),
+                              child: Image.asset('assets/images/mobile.png')),
                         ],
                       ),
                       const SizedBox(height: 10,),
@@ -162,7 +162,7 @@ class loginscreen extends StatelessWidget{
                         color: Colors.black87,
                       ),),
                     GestureDetector(
-                    child: const Text("Sign In",style: TextStyle(fontWeight: FontWeight.bold,
+                    child: const Text("Sign Up",style: TextStyle(fontWeight: FontWeight.bold,
                         fontSize: 15,
                             color: Colors.red
                             ),),

@@ -29,32 +29,37 @@ class _NavigationMenuState extends State<NavigationMenu> {
         child: widgetOptions.elementAt(_selectedIndex),
     ),
       bottomNavigationBar:
-      Container(
-        margin: EdgeInsets.symmetric(vertical: 10,horizontal: 5),
-        child: Padding(
-          padding: EdgeInsets.zero,
-                      child: GNav(
-                            color: Colors.black,
-                            backgroundColor: Colors.white60,
-                            tabBackgroundColor: Colors.purpleAccent,
-                            activeColor: Colors.black,
-                            duration: Duration(milliseconds: 500),
-                            gap: 5,
-                           tabActiveBorder: Border.all(color: Colors.black, width: 2), // tab button border
-                            tabs: const [
-                              GButton(icon: Icons.home,text: "Home",),
-                              GButton(icon: Icons.local_hospital_outlined,text: "Hospital"),
-                              GButton(icon: Icons.person,text: "Doctor"),
-                              GButton(icon: Icons.more_horiz_outlined,text: "Profile"),
-                            ],
-                            selectedIndex: _selectedIndex,
-                            onTabChange: (index) {
-                              setState(() {
-                                _selectedIndex = index;
-                              });
-                            }
-                          ),
-                  ),
+      SizedBox(
+        height: 80,
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 2,horizontal: 1),
+          child: Padding(
+            padding: EdgeInsets.zero,
+                        child: GNav(
+                            iconSize: 20,
+                             tabBorder: Border.all(color: Colors.grey, width: 1),
+                              color: Colors.black,
+                              backgroundColor: Colors.white60,
+                              tabBackgroundColor: Colors.purpleAccent,
+                              activeColor: Colors.black,
+                              duration: Duration(milliseconds: 500),
+                              gap: 5,
+                             tabActiveBorder: Border.all(color: Colors.black, width: 2), // tab button border
+                              tabs: const [
+                                GButton(icon: Icons.home,),
+                                GButton(icon: Icons.local_hospital_outlined,),
+                                GButton(icon: Icons.person,),
+                                GButton(icon: Icons.more_horiz_outlined,),
+                              ],
+                              selectedIndex: _selectedIndex,
+                              onTabChange: (index) {
+                                setState(() {
+                                  _selectedIndex = index;
+                                });
+                              }
+                            ),
+                    ),
+        ),
       ),
         );
   }
