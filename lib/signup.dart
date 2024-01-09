@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:healthify/login.dart';
 
+import 'login.dart';
 import 'navigation_menu.dart';
 
 class signup extends StatelessWidget{
@@ -143,7 +143,7 @@ class signup extends StatelessWidget{
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Already Have An Account? ",style: TextStyle(
+                    Text("Already Have An Account? ",style: TextStyle(
                       fontSize: 15,
                       color: Colors.black87,
                     ),), GestureDetector(
@@ -151,10 +151,10 @@ class signup extends StatelessWidget{
                           fontSize: 15,
                           color: Colors.red
                       ),),
-                      onTap: (){
-                        Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => const loginscreen()),);
-                      },
+                     onTap :(){
+                       Navigator.push(context,
+                       MaterialPageRoute(builder :(context)=> const loginscreen()),);
+              }
                     ),
                   ],
                 ),

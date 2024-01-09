@@ -37,7 +37,7 @@ class home extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "Tonybhai",
+                          "KAMLESH",
                           style: TextStyle(
                               fontSize: 25,
                               color: Colors.black87,
@@ -187,7 +187,7 @@ class home extends StatelessWidget {
                                     ),
                                     ),
                                     SizedBox(height: 2,),
-                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify tonybhai",
+                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify (tonybhai,Kamlesh & heamnt)",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),))
