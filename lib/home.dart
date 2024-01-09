@@ -1,7 +1,6 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:healthify/more.dart';
 
 import 'navigation_menu.dart';
 
@@ -9,11 +8,6 @@ class home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.purple,
-        title: const Text("Healthify",style: TextStyle(
-            fontWeight: FontWeight.bold,),),
-      ),
       body: Stack(children: [
         SafeArea(
           child: Padding(
@@ -299,12 +293,12 @@ class home extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(8.0),
                                         child: SizedBox.fromSize(
                                             size: Size.fromRadius(48), // Image radius
-                                            child: Image.asset("assets/images/Hospi.png",fit: BoxFit.fitWidth)
+                                            child: Image.asset("assets/images/lakshadweep.jpeg",fit: BoxFit.fill)
                                         ),
                                       ),
                                     ),
                                     SizedBox(height: 2,),
-                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify tonybhai",
+                                    const Expanded(child: Text("Tonybhai going to open new branch of healthify at Lakshadweep meeting done with PM MODI",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),))

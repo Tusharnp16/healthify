@@ -143,7 +143,7 @@ class signup extends StatelessWidget{
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Already Have An Account? ",style: TextStyle(
+                    const Text("Already Have An Account? ",style: TextStyle(
                       fontSize: 15,
                       color: Colors.black87,
                     ),), GestureDetector(
