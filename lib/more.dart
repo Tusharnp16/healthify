@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:healthify/login.dart';
 import 'package:healthify/logout.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 
 class more extends StatelessWidget {
   @override
@@ -20,16 +20,8 @@ class more extends StatelessWidget {
                     child: Image.asset('assets/images/admin.jpg',
                         fit: BoxFit.cover),
                   ),
-                  onTap: () =>Fluttertoast.showToast(
-                      msg: "We are in developing mode",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                      fontSize: 16.0
+                  onTap: (){}
                   //Navigator.push(context, MaterialPageRoute(builder: (context)=> logout()));
-                ),
                 ),
               ),
               Divider(),
