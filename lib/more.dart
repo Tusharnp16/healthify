@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:healthify/login.dart';
 import 'package:healthify/logout.dart';
 
+import 'package:healthify/Aboutus.dart';
+
 
 class more extends StatelessWidget {
   @override
@@ -59,7 +61,9 @@ class more extends StatelessWidget {
               ListTile(
                 title: Text("About Healthify"),
                 trailing: Icon(Icons.local_hospital_outlined),
-                onTap: () => print("We are working on it Tonybhai"),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> Aboutus()));
+                },
                 //Navigator.push(context, MaterialPageRoute(builder: (context)=> logout()));
               ),
               ListTile(
@@ -74,3 +78,5 @@ class more extends StatelessWidget {
     );
   }
 }
+
+
