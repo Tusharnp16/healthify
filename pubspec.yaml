@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_nav_bar: ^5.0.6
   firebase_core: ^2.24.2
-  intl_phone_number_input: ^0.7.0+2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

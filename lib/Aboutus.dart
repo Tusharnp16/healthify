@@ -20,7 +20,6 @@ class Aboutus extends StatelessWidget{
                 color: Colors.lightBlue,
               ),),
             Text(" FOUNDER OF HEALTHIFY : TUSHAR ,KAMLESH & HEMANT ",
-
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,

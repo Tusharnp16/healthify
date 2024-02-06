@@ -4,7 +4,6 @@ import 'package:healthify/login.dart';
 import 'package:healthify/logout.dart';
 
 import 'package:healthify/Aboutus.dart';
-import 'package:healthify/contact.dart';
 
 
 class more extends StatelessWidget {
@@ -49,9 +48,7 @@ class more extends StatelessWidget {
               ListTile(
                 title: Text("Contact Us"),
                 trailing: Icon(Icons.contact_page_outlined),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=> contact()));
-                },
+                onTap: () => print("We are working on it Tonybhai"),
                 //Navigator.push(context, MaterialPageRoute(builder: (context)=> logout()));
               ),
               Divider(),
