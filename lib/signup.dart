@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-// import 'package:mask_text_formatter/mask_text_formatter.dart';
 
 import 'login.dart';
-
-
 
 class Signup extends StatefulWidget {
   @override
@@ -20,7 +17,8 @@ class TenDigitFormatter extends TextInputFormatter {
   }
 
   @override
-  TextEditingValue formatEditValue(TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditValue(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.length > 10) {
       return TextEditingValue(
         text: oldValue.text,
@@ -36,10 +34,8 @@ class _SignupState extends State<Signup> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-
-  // TextEditingController _phoneNumberController = TextEditingController();
-
+  final TextEditingController _confirmPasswordController =
+  TextEditingController();
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _lnameController = TextEditingController();
@@ -54,170 +50,133 @@ class _SignupState extends State<Signup> {
   bool _isPasswordHidden = true;
   bool _isConfirmPasswordHidden = true;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xffe056fd), Color(0xff9402b6)],
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 60.0, left: 22),
-              child: Text(
-                "Welcome Back !!,\nSign In",
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 200.0),
-
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(40),
-                  topRight: Radius.circular(40),
-                ),
-                color: Colors.white,
-              ),
-              height: double.infinity,
-              width: double.infinity,
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 18.0),
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 30, left: 8, right: 8),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildTextInput(
-                            controller: _nameController,
-                            onChanged: _validateName,
-                            hintText: "First Name",
-                            errorText: _nameErr,
-                            icon: Icons.person_3_rounded,
-                          ),
-                          const SizedBox(height: 20),
-
-                          _buildTextInput(
-                            controller: _lnameController,
-                            onChanged: _validateLastName,
-                            hintText: "Last Name",
-                            errorText: _lnameErr,
-                            icon: Icons.person_3_rounded,
-                          ),
-                          const SizedBox(height: 20),
-
-                          _buildPhoneNumberField(),
-
-                          const SizedBox(height: 20),
-                          _buildTextInput(
-                            controller: _emailController,
-                            onChanged: _validateEmail,
-                            hintText: "Email",
-                            errorText: _emailErr,
-                            icon: Icons.mail,
-                          ),
-
-                          const SizedBox(height: 20),
-                          _buildPasswordField(
-                            controller: _passwordController,
-                            onChanged: _validatePassword,
-                            hintText: "Password",
-                            errorText: _passwordErr,
-                            icon: Icons.lock_open,
-                            isHidden: _isPasswordHidden,
-                            onPressed: _togglePasswordVisibility,
-                          ),
-                          const SizedBox(height: 20),
-                          _buildPasswordField(
-                            controller: _confirmPasswordController,
-                            onChanged: _validateConfirmPassword,
-                            hintText: "Confirm Password",
-                            errorText: _confirmPasswordErr,
-                            icon: Icons.lock_open,
-                            isHidden: _isConfirmPasswordHidden,
-                            onPressed: _toggleConfirmPasswordVisibility,
-                          ),
-                          const SizedBox(height: 30),
-                          ElevatedButton(
-                            onPressed: _validateAndNavigate,
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.purpleAccent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(37),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              child: Text(
-                                "Continue",
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 25),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 10,
-            left: 5,
-            right: 5,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Already Have An Account? ",
+                Text(
+                  "Welcome Back !!,\nSign In",
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 30,
                     color: Colors.black87,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                GestureDetector(
-                  child: const Text(
-                    "Sign In",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      color: Colors.red,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const loginscreen(),
+                SizedBox(height: 20),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      _buildTextInput(
+                        controller: _nameController,
+                        onChanged: _validateName,
+                        hintText: "First Name",
+                        errorText: _nameErr,
+                        icon: Icons.person_3_rounded,
                       ),
-                    );
-                  },
+                      SizedBox(height: 20),
+                      _buildTextInput(
+                        controller: _lnameController,
+                        onChanged: _validateLastName,
+                        hintText: "Last Name",
+                        errorText: _lnameErr,
+                        icon: Icons.person_3_rounded,
+                      ),
+                      SizedBox(height: 20),
+                      _buildPhoneNumberField(),
+                      SizedBox(height: 20),
+                      _buildTextInput(
+                        controller: _emailController,
+                        onChanged: _validateEmail,
+                        hintText: "Email",
+                        errorText: _emailErr,
+                        icon: Icons.mail,
+                      ),
+                      SizedBox(height: 20),
+                      _buildPasswordField(
+                        controller: _passwordController,
+                        onChanged: _validatePassword,
+                        hintText: "Password",
+                        errorText: _passwordErr,
+                        icon: Icons.lock_open,
+                        isHidden: _isPasswordHidden,
+                        onPressed: _togglePasswordVisibility,
+                      ),
+                      SizedBox(height: 20),
+                      _buildPasswordField(
+                        controller: _confirmPasswordController,
+                        onChanged: _validateConfirmPassword,
+                        hintText: "Confirm Password",
+                        errorText: _confirmPasswordErr,
+                        icon: Icons.lock_open,
+                        isHidden: _isConfirmPasswordHidden,
+                        onPressed: _toggleConfirmPasswordVisibility,
+                      ),
+                      SizedBox(height: 30),
+                      ElevatedButton(
+                        onPressed: _validateAndNavigate,
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.purpleAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(37),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: Text(
+                            "Continue",
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Already Have An Account? ",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    GestureDetector(
+                      child: Text(
+                        "Sign In",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Colors.red,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => loginscreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -225,12 +184,8 @@ class _SignupState extends State<Signup> {
   Widget _buildPhoneNumberField() {
     return InternationalPhoneNumberInput(
       onInputChanged: _validatePhoneNumber,
-      onInputValidated: (bool value) {
-        // Handle validation state
-      },
       selectorConfig: SelectorConfig(
         selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-        // initialCountryIsoCode: 'IN', // Set default country to India
       ),
       ignoreBlank: false,
       autoValidateMode: AutovalidateMode.onUserInteraction,
@@ -240,10 +195,8 @@ class _SignupState extends State<Signup> {
       errorMessage: _phoneNumberErr,
       hintText: 'Phone Number',
       initialValue: PhoneNumber(isoCode: 'IN'),
-      // ... other code
     );
   }
-
 
   Widget _buildTextInput({
     required TextEditingController controller,
@@ -304,7 +257,6 @@ class _SignupState extends State<Signup> {
 
   void _validateName(String value) {
     setState(() {
-      // Validation logic for the first name
       _nameErr = value.isEmpty
           ? 'Enter Your First Name'
           : (RegExp(r'^[a-zA-Z]+$').hasMatch(value)
@@ -316,7 +268,6 @@ class _SignupState extends State<Signup> {
 
   void _validateLastName(String value) {
     setState(() {
-      // Validation logic for the last name
       _lnameErr = value.isEmpty
           ? 'Enter Your Last Name'
           : (RegExp(r'^[a-zA-Z]+$').hasMatch(value)
@@ -328,7 +279,6 @@ class _SignupState extends State<Signup> {
 
   void _validateEmail(String value) {
     setState(() {
-      // Validation logic for email
       _emailErr = RegExp(
         r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
       ).hasMatch(value)
@@ -337,10 +287,8 @@ class _SignupState extends State<Signup> {
     });
   }
 
-
   void _validatePassword(String value) {
     setState(() {
-      // Validation logic for password
       _passwordController.value = _passwordController.value.copyWith(
         text: value,
         selection: TextSelection.collapsed(offset: value.length),
@@ -349,10 +297,8 @@ class _SignupState extends State<Signup> {
     });
   }
 
-
   void _validateConfirmPassword(String value) {
     setState(() {
-      // Validation logic for confirm password
       _confirmPasswordController.value =
           _confirmPasswordController.value.copyWith(
             text: value,
@@ -361,7 +307,6 @@ class _SignupState extends State<Signup> {
       _confirmPasswordErr = _validateConfirmPasswordRules(value);
     });
   }
-
 
   String? _validatePasswordRules(String value) {
     if (value.isEmpty) {
@@ -405,7 +350,8 @@ class _SignupState extends State<Signup> {
 
   void _validatePhoneNumber(PhoneNumber phoneNumber) {
     setState(() {
-      if (phoneNumber.phoneNumber == null || phoneNumber.phoneNumber!.isEmpty) {
+      if (phoneNumber.phoneNumber == null ||
+          phoneNumber.phoneNumber!.isEmpty) {
         _phoneNumberErr = 'Phone number cannot be empty';
       } else if (phoneNumber.phoneNumber!.length != 13) {
         _phoneNumberErr = phoneNumber.phoneNumber!.length < 13
@@ -421,19 +367,12 @@ class _SignupState extends State<Signup> {
   }
 
   void _validateAndNavigate() {
-    // Check for empty fields first
-    if (_nameController.text.isEmpty ||
-        _lnameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneNumberController.text.isEmpty ||
-        _passwordController.text.isEmpty ||
-        _confirmPasswordController.text.isEmpty) {
-      // At least one field is empty, show a message or handle it accordingly
-      print('Please fill in all fields.');
-      return;
-    }
+    _validateName(_nameController.text);
+    _validateLastName(_lnameController.text);
+    _validateEmail(_emailController.text);
+    _validatePassword(_passwordController.text);
+    _validateConfirmPassword(_confirmPasswordController.text);
 
-    // Validate all fields before navigating to the login page
     if (_nameErr == null &&
         _lnameErr == null &&
         _emailErr == null &&
@@ -452,7 +391,8 @@ class _SignupState extends State<Signup> {
         builder: (context) {
           return AlertDialog(
             title: Text('Validation Error'),
-            content: Text('Please fix the highlighted errors and try again.'),
+            content:
+            Text('Please fix the highlighted errors and try again.'),
             actions: [
               TextButton(
                 onPressed: () {
