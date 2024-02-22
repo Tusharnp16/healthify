@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:healthify/more.dart';
-
+import 'bookAppointment.dart';
 import 'navigation_menu.dart';
 
 class home extends StatelessWidget {
@@ -121,7 +121,7 @@ class home extends StatelessWidget {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      const NavigationMenu()),
+                                                      AppointmentBookingPage()),
                                             );
                                           },
                                         ),

@@ -4,7 +4,6 @@ import 'package:healthify/login.dart';
 import 'package:healthify/logout.dart';
 
 import 'package:healthify/Aboutus.dart';
-import 'package:healthify/profile.dart';
 
 
 class more extends StatelessWidget {
@@ -23,10 +22,7 @@ class more extends StatelessWidget {
                     child: Image.asset('assets/images/admin.jpg',
                         fit: BoxFit.cover),
                   ),
-                  onTap: (){
-                    Navigator.push(context,
-                      MaterialPageRoute(builder :(context)=>  profile()));
-                  }
+                  onTap: (){}
                   //Navigator.push(context, MaterialPageRoute(builder: (context)=> logout()));
                 ),
               ),

@@ -11,9 +11,11 @@ class Aboutus extends StatelessWidget{
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text("Healthify is services application which will provide service such as :\n"
-                "1.Appointment BOOKING Service. \n"
-                "2.Hospital  &  Doctor Details. \n"
-                "3.Daily news update.",
+                "1. Appointment BOOKING Service. \n"
+                "2. Hospital  &  Doctor Details. \n"
+                "3. Daily news update."
+              "4. Git hub connecetion successful",
+
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,

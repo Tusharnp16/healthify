@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class doctor extends StatelessWidget{
+class contact extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,13 +10,17 @@ class doctor extends StatelessWidget{
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("doctor Screen In Progress stay tuned",
+            Text("Healthify is services application which will provide service such as :\n"
+                "1.Appointment BOOKING Service. \n"
+                "2.Hospital  &  Doctor Details. \n"
+                "3.Daily news update.",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
                 color: Colors.lightBlue,
               ),),
-            Text("tonybhai",
+            Text(" FOUNDER OF HEALTHIFY : TUSHAR ,KAMLESH & HEMANT ",
+
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
