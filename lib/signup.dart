@@ -123,7 +123,7 @@ class _SignupState extends State<Signup> {
                       ElevatedButton(
                         onPressed: _validateAndNavigate,
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.purpleAccent,
+                          backgroundColor: Colors.purpleAccent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(37),
                           ),
