@@ -26,9 +26,11 @@ class _doctorState extends State<doctor> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text("${snapshot.data!.docs[index]["Mobile"]}"),
+                            Text("${snapshot.data!.docs[index]["Gender"]}"),
+                            Text("${snapshot.data!.docs[index]["Email"]}"),
                             Text("${snapshot.data!.docs[index]["Specialist"]}"),
                             Text("${snapshot.data!.docs[index]["Hospital"]}"),
-                            Divider(),
                           ]
                       )
                   );
