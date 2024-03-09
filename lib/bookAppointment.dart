@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 void main() {
   runApp(MyApp());
@@ -51,6 +52,38 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
     'Other',
   ];
 
+  late Razorpay _razorpay;
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    _razorpay.clear();
+    super.dispose();
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    // Do something when payment succeeds
+    print('Payment Success');
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    // Do something when payment fails
+    print('Payment Error: ${response.message}');
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    // Do something when an external wallet was selected
+    print('External Wallet: ${response.walletName}');
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -73,6 +106,27 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
       setState(() {
         _selectedTime = picked;
       });
+  }
+
+  void _handlePayment() {
+    // Replace with your Razorpay API key
+    String apiKey = 'YOUR_RAZORPAY_API_KEY';
+    var options = {
+      'key': apiKey,
+      'amount': 100, // Change this to the actual amount in paise
+      'name': 'Appointment Booking',
+      'description': 'Payment for Appointment Booking',
+      'prefill': {'contact': _phoneNo, 'email': 'example@example.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint('Error: $e');
+    }
   }
 
   @override
@@ -122,7 +176,7 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
                 : DropdownButtonFormField<String>(
               value: _selectedProblem,
               hint: Text('Select Problem Faced'),
-              items: problemOptions.map((String problem) {
+              items: problemOptions.map<DropdownMenuItem<String>>((String problem) {
                 return DropdownMenuItem<String>(
                   value: problem,
                   child: Text(problem),
@@ -189,7 +243,7 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
             DropdownButtonFormField<String>(
               value: _selectedHospital,
               hint: Text('Select Hospital'),
-              items: ['Select Hospital', ...hospitals].map((String hospital) {
+              items: ['Select Hospital', ...hospitals].map<DropdownMenuItem<String>>((String hospital) {
                 return DropdownMenuItem<String>(
                   value: hospital,
                   child: Text(hospital),
@@ -212,77 +266,49 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
                 ? DropdownButtonFormField<String>(
               value: _selectedDoctor,
               hint: Text('Select Doctor'),
-              items: ['Select Doctor', ...doctors[_selectedHospital]!].map((String doctor) {
+              items: ['Select Doctor', ...doctors[_selectedHospital]!]
+                  .map<DropdownMenuItem<String>>((String doctor) {
                 return DropdownMenuItem<String>(
                   value: doctor,
                   child: Text(doctor),
                 );
               }).toList(),
               onChanged: (String? value) {
-                setState(() {
-                  _selectedDoctor = value!;
-                });
+                if (value != null) {
+                  setState(() {
+                    _selectedDoctor = value;
+                  });
+                }
               },
             )
-                : SizedBox(),
+                : SizedBox.shrink(),
             SizedBox(height: 12.0),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Expanded(
-                  child: Text(
-                    'Appointment Date: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                  ),
-                ),
-                ElevatedButton(
+                Text('Select Date:'),
+                TextButton(
                   onPressed: () => _selectDate(context),
-                  child: Text('Select Date'),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.0),
-            Row(
-              children: <Widget>[
-                Expanded(
                   child: Text(
-                    'Appointment Time: ${_selectedTime.hour}:${_selectedTime.minute}',
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () => _selectTime(context),
-                  child: Text('Select Time'),
+                      '${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}'),
                 ),
               ],
             ),
-            SizedBox(height: 12.0),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _lastPatientId++;
-                });
-                print('Booking Appointment...');
-                print('Patient ID: ${_lastPatientId}');
-                print('Patient Name: $_patientName');
-                print('Phone Number: $_phoneNo');
-                print('Problem Faced: ${_selectedProblem == 'Other' ? _otherProblem : _selectedProblem}');
-                print('Age: $_patientAge');
-                print('Sex: $_selectedSex');
-                print('Hospital: $_selectedHospital');
-                print('Doctor: $_selectedDoctor');
-                print('Appointment Date: $_selectedDate');
-                print('Appointment Time: $_selectedTime');
-              },
-              child: Text('Book Appointment'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Select Time:'),
+                TextButton(
+                  onPressed: () => _selectTime(context),
+                  child: Text(
+                      '${_selectedTime.hour}:${_selectedTime.minute}'),
+                ),
+              ],
             ),
-            SizedBox(height: 12.0),
+            SizedBox(height: 20.0),
             ElevatedButton(
-              onPressed: () {
-                final snackBar = SnackBar(
-                  content: Text('Appointment Cancelled'),
-                  duration: Duration(seconds: 2),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              },
-              child: Text('Cancel Appointment'),
+              onPressed: _handlePayment,
+              child: Text('Make Payment'),
             ),
           ],
         ),
