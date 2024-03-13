@@ -67,15 +67,15 @@ class _profileState extends State<profile> {
                 const TextField(
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.purple),
+                      borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.purple),
+                        borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     prefixIcon: Icon(
                       Icons.person_2_rounded,
-                      color: Colors.purple,
+                      color: Color.fromARGB(220, 59, 206, 255),
                     ),
                     hintText: "Name",
                   ),
@@ -86,15 +86,15 @@ class _profileState extends State<profile> {
                 const TextField(
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.purple),
+                      borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.purple),
+                        borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     prefixIcon: Icon(
                       Icons.person_2_rounded,
-                      color: Colors.purple,
+                      color: Color.fromARGB(220, 59, 206, 255),
                     ),
                     hintText: "Gender",
                   ),
@@ -105,15 +105,15 @@ class _profileState extends State<profile> {
                 const TextField(
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.purple),
+                      borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.purple),
+                        borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     prefixIcon: Icon(
                       Icons.person_2_rounded,
-                      color: Colors.purple,
+                      color: Color.fromARGB(220, 59, 206, 255),
                     ),
                     hintText: "Mobile No",
                   ),
@@ -124,15 +124,15 @@ class _profileState extends State<profile> {
                 const TextField(
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.purple),
+                      borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.purple),
+                        borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     prefixIcon: Icon(
                       Icons.person_2_rounded,
-                      color: Colors.purple,
+                      color: Color.fromARGB(220, 59, 206, 255),
                     ),
                     hintText: "Email Id",
                   ),
@@ -147,7 +147,7 @@ class _profileState extends State<profile> {
                     width: double.infinity,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Colors.purpleAccent,
+                      color: Color.fromARGB(220, 15, 124, 160),
                       borderRadius: BorderRadius.circular(37),
                     ),
                     child: const Text(

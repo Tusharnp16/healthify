@@ -6,6 +6,7 @@ import 'package:healthify/login.dart';
 import 'package:healthify/more.dart';
 import 'package:healthify/navigation_menu.dart';
 import 'package:healthify/signup.dart';
+import 'package:healthify/signup.dart';
 
 void main()async {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      
 
       title: 'Healthify',
       debugShowCheckedModeBanner: false,

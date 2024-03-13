@@ -122,16 +122,19 @@ class _SignupState extends State<Signup> {
                       SizedBox(height: 30),
                       ElevatedButton(
                         onPressed: _validateAndNavigate,
+                        
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purpleAccent,
+                          primary: Color.fromARGB(220, 115, 208, 239),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(37),
                           ),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15),
+                          
                           child: Text(
                             "Continue",
+                            
                             style: TextStyle(
                               color: Colors.black87,
                               fontWeight: FontWeight.w700,
@@ -187,6 +190,7 @@ class _SignupState extends State<Signup> {
       selectorConfig: SelectorConfig(
         selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
       ),
+
       ignoreBlank: false,
       autoValidateMode: AutovalidateMode.onUserInteraction,
       formatInput: false,
@@ -211,7 +215,7 @@ class _SignupState extends State<Signup> {
       decoration: InputDecoration(
         enabledBorder: _inputBorderStyle(),
         focusedBorder: _inputBorderStyle(),
-        prefixIcon: Icon(icon, color: Colors.purple),
+        prefixIcon: Icon(icon, color: Color.fromARGB(220, 59, 206, 255)),
         hintText: hintText,
         errorText: errorText,
       ),
@@ -234,11 +238,11 @@ class _SignupState extends State<Signup> {
       decoration: InputDecoration(
         enabledBorder: _inputBorderStyle(),
         focusedBorder: _inputBorderStyle(),
-        prefixIcon: Icon(icon, color: Colors.purple),
+        prefixIcon: Icon(icon, color: Color.fromARGB(220, 59, 206, 255)),
         suffixIcon: IconButton(
           icon: Icon(
             isHidden ? Icons.visibility : Icons.visibility_off,
-            color: Colors.purple,
+            color: Color.fromARGB(220, 59, 206, 255),
           ),
           onPressed: onPressed,
         ),
@@ -250,7 +254,7 @@ class _SignupState extends State<Signup> {
 
   OutlineInputBorder _inputBorderStyle() {
     return OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.purple),
+      borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
       borderRadius: BorderRadius.all(Radius.circular(20)),
     );
   }

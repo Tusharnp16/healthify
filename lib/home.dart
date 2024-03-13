@@ -56,8 +56,10 @@ class home extends StatelessWidget {
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                             gradient: LinearGradient(colors: [
-                              Color(0xffe056fd),
-                              Color(0xff9402b6),
+                              Color.fromARGB(220, 174, 255, 255),
+                              Color.fromARGB(220, 137, 238, 255),
+                              Color.fromARGB(220, 176, 226, 255)  ,
+                              Color.fromARGB(220, 59, 206, 255),
                             ]),
                           ),
                           child: Padding(

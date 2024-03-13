@@ -25,49 +25,55 @@ class _NavigationMenuState extends State<NavigationMenu> {
 
   @override
   Widget build(BuildContext context) {
+    final double iconSize = 18.0;
+    final double navBarHeight = 72.0;
+    final EdgeInsetsGeometry navBarPadding = EdgeInsets.zero;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple,
-        title: const Text("Healthify",style: TextStyle(
-          fontWeight: FontWeight.bold,),),
-      ),
-    body:Center(
-        child: widgetOptions.elementAt(_selectedIndex),
-    ),
-      bottomNavigationBar:
-      SizedBox(
-        height: 80,
-        child: Container(
-          margin: EdgeInsets.symmetric(vertical: 2,horizontal: 1),
-          child: Padding(
-            padding: EdgeInsets.zero,
-                        child: GNav(
-                            iconSize: 20,
-                            // tabBorder: Border.all(color: Colors.grey, width: 1),
-                              color: Colors.black,
-                              backgroundColor: Colors.white60,
-                              tabBackgroundColor: Colors.purpleAccent,
-                              activeColor: Colors.black,
-                              duration: const Duration(milliseconds: 500),
-                              gap: 5,
-                             tabActiveBorder: Border.all(color: Colors.black, width: 2), // tab button border
-                              tabs: const [
-                                GButton(icon: Icons.home,text: "Home",),
-                                GButton(icon: Icons.local_hospital_outlined,text: "Hospital"),
-                                GButton(icon: Icons.person,text: "Doctor"),
-                                GButton(icon: Icons.more_horiz_outlined,text: "Profile"),
-                              ],
-                              selectedIndex: _selectedIndex,
-                              onTabChange: (index) {
-                                setState(() {
-                                  _selectedIndex = index;
-                                });
-                              }
-                            ),
-                    ),
+        backgroundColor: Color.fromARGB(220, 59, 206, 255),
+        title: const Text(
+          "Healthify",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
-        );
+      body: Center(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height - navBarHeight,
+          child: widgetOptions.elementAt(_selectedIndex),
+        ),
+      ),
+      bottomNavigationBar: SizedBox(
+        height: navBarHeight,
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 2, horizontal: 1),
+          child: Padding(
+            padding: navBarPadding,
+            child: GNav(
+              iconSize: iconSize,
+              color: Color.fromARGB(255, 30, 30, 30),
+              backgroundColor: Color.fromARGB(255, 155, 224, 255),
+              activeColor: Color.fromARGB(255, 201, 93, 93),
+              duration: const Duration(milliseconds: 500),
+              gap: 5,
+              tabs: const [
+                GButton(icon: Icons.home, text: "Home"),
+                GButton(icon: Icons.local_hospital_outlined, text: "Hospital"),
+                GButton(icon: Icons.person, text: "Doctor"),
+                GButton(icon: Icons.more_horiz_outlined, text: "Profile"),
+              ],
+              selectedIndex: _selectedIndex,
+              onTabChange: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
-
