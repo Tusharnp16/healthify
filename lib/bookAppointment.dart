@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'razor_pay.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 void main() {
   runApp(MyApp());
 }
@@ -29,7 +31,7 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
   String _problem = '';
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
-  final Razor raz= new Razor();
+ final RazorPay raz= new RazorPay();
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -41,6 +43,58 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
       setState(() {
         _selectedDate = picked;
       });
+  }
+  Razorpay? _razorpay;
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay?.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay?.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay?.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay?.clear();
+  }
+
+  void openChecF() async {
+    var options = {
+      'key': 'rzp_test_bsrsCz0zr14pGE',
+      'amount': 20000,
+      'name': 'Healthify',
+      'description': 'Payment',
+      'prefill': {'contact': '6352707270', 'email': 'sardakamlesh3@gmail.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay?.open(options);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    Fluttertoast.showToast(
+        msg: "SUCCESS PAYMENT: ${response.paymentId}", timeInSecForIosWeb: 4);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+        msg: "ERROR HERE: ${response.code} - ${response.message}",
+        timeInSecForIosWeb: 4);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET IS : ${response.walletName}",
+        timeInSecForIosWeb: 4);
   }
 
   Future<void> _selectTime(BuildContext context) async {
@@ -120,7 +174,7 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
             ElevatedButton(
               onPressed: () {
 
-                raz.initiatePayment();
+                openChecF();
 
               },
               child: Text('Book Appointment'),

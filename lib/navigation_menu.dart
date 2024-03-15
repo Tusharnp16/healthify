@@ -19,7 +19,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   List<Widget> widgetOptions = <Widget>[
     home(),
     doctor(),
-    hospital(),
+    HospitalScreen(),
     more()
   ];
 

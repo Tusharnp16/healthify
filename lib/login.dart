@@ -1,11 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:healthify/config/authnication.dart';
+import 'package:healthify/home.dart';
 import 'package:healthify/navigation_menu.dart';
 import 'package:healthify/signup.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:lottie/lottie.dart';
 
-class loginscreen extends StatelessWidget {
+class loginscreen extends StatefulWidget {
   const loginscreen({Key? key}) : super(key: key);
+
+  @override
+  State<loginscreen> createState() => _loginscreenState();
+}
+
+class _loginscreenState extends State<loginscreen> {
+  TextEditingController emailcontroller = TextEditingController();
+  TextEditingController passwordcontroller = TextEditingController();
+
+  String? _emailErr;
+  String? _passwordErr;
+
+  bool _isPasswordHidden = true;
+  bool _isConfirmPasswordHidden = true;
+
+  final authnicationfirebase authfirebase = new authnicationfirebase();
 
   @override
   Widget build(BuildContext context) {
@@ -32,21 +52,24 @@ class loginscreen extends StatelessWidget {
             builder: (context, constraints) {
               return SingleChildScrollView(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center, // Center the content vertically
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  // Center the content vertically
                   children: [
                     Padding(
                       padding: EdgeInsets.only(top: screenSize.height * 0.12),
                       child: Row(
                         children: [
                           Transform(
-                            transform: Matrix4.translationValues(28.0, -21.0, 0.0),
+                            transform:
+                                Matrix4.translationValues(28.0, -21.0, 0.0),
                             child: Row(
                               children: [
                                 Container(
                                   child: Opacity(
                                     opacity: 0.6,
                                     child: Transform(
-                                      transform: Matrix4.translationValues(-4.5, -28.8, 0.0),
+                                      transform: Matrix4.translationValues(
+                                          -4.5, -28.8, 0.0),
                                       child: Lottie.asset(
                                         'assets/Video/anime.json',
                                         fit: BoxFit.cover,
@@ -72,9 +95,11 @@ class loginscreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 20.0),
-                    Center( // Wrap with Center widget to move the container to the center
+                    Center(
+                      // Wrap with Center widget to move the container to the center
                       child: Container(
-                        width: screenSize.width, // Adjust the width of the container as needed
+                        width: screenSize.width,
+                        // Adjust the width of the container as needed
                         height: screenSize.width,
                         decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(36)),
@@ -85,55 +110,111 @@ class loginscreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              TextField(
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(vertical: 9.0 * textScaleFactor),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
-                                    borderRadius: BorderRadius.all(Radius.circular(18 * textScaleFactor)),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
-                                    borderRadius: BorderRadius.all(Radius.circular(18 * textScaleFactor)),
-                                  ),
-                                  prefixIcon: Icon(Icons.person_2_rounded, color: Color.fromARGB(220, 59, 206, 255),
-                                      size: 21.6* textScaleFactor),
-                                  hintText: "Gmail",
-                                ),
+                              _buildTextInput(
+
+                                controller: emailcontroller,
+
+                                onChanged: _validateEmail,
+                                hintText: "Email",
+                                errorText: _emailErr,
+                                icon: Icons.mail,
                               ),
-                              SizedBox(height: 18 * textScaleFactor),
-                              TextField(
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.symmetric(vertical: 9.0 * textScaleFactor),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(18 * textScaleFactor)),
-                                    borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
-                                    borderRadius: BorderRadius.all(Radius.circular(18 * textScaleFactor)),
-                                  ),
-                                  prefixIcon: Icon(Icons.lock_open, color: Color.fromARGB(220, 59, 206, 255), size: 21.6 * textScaleFactor),
-                                  hintText: "Password",
-                                ),
+                              SizedBox(height: 20),
+                              _buildPasswordField(
+                                controller: passwordcontroller,
+                                onChanged: _validatePassword,
+                                hintText: "Password",
+                                errorText: _passwordErr,
+                                icon: Icons.lock_open,
+                                isHidden: _isPasswordHidden,
+                                onPressed: _togglePasswordVisibility,
                               ),
+                              // TextField(
+                              //   decoration: InputDecoration(
+                              //     contentPadding: EdgeInsets.symmetric(vertical: 9.0 * textScaleFactor),
+                              //     enabledBorder: OutlineInputBorder(
+                              //       borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
+                              //       borderRadius: BorderRadius.all(Radius.circular(18 * textScaleFactor)),
+                              //     ),
+                              //     focusedBorder: OutlineInputBorder(
+                              //       borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
+                              //       borderRadius: BorderRadius.all(Radius.circular(18 * textScaleFactor)),
+                              //     ),
+                              //     prefixIcon: Icon(Icons.person_2_rounded, color: Color.fromARGB(220, 59, 206, 255),
+                              //         size: 21.6* textScaleFactor),
+                              //     hintText: "Gmail",
+                              //   ),
+                              //   controller: emailcontroller,
+                              // ),
+                              // SizedBox(height: 18 * textScaleFactor),
+                              // TextField(
+                              //    controller: passwordcontroller,
+                              //   decoration: InputDecoration(
+                              //     contentPadding: EdgeInsets.symmetric(vertical: 9.0 * textScaleFactor),
+                              //     enabledBorder: OutlineInputBorder(
+                              //       borderRadius: BorderRadius.all(Radius.circular(18 * textScaleFactor)),
+                              //       borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
+                              //     ),
+                              //     focusedBorder: OutlineInputBorder(
+                              //       borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
+                              //       borderRadius: BorderRadius.all(Radius.circular(18 * textScaleFactor)),
+                              //     ),
+                              //     prefixIcon: Icon(Icons.lock_open, color: Color.fromARGB(220, 59, 206, 255), size: 21.6 * textScaleFactor),
+                              //     hintText: "Password",
+                              //   ),
+                              // ),
                               SizedBox(height: 27 * textScaleFactor),
                               Container(
                                 width: double.infinity,
                                 height: 36 * textScaleFactor,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const NavigationMenu()),);
+                                    [
+                                      if (_validateAndNavigate())
+                                        {
+                                          authfirebase
+                                              .loginwithemailandpassword(
+                                                  emailcontroller.text.trim(),
+                                                  passwordcontroller.text
+                                                      .trim())
+                                              .then((value) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const NavigationMenu()));
+                                          }),
+                                        }
+                                      else
+                                        {
+                                          AlertDialog(
+                                              title: Text('Validation Error'),
+                                              content: Text(
+                                                  'Please fix the highlighted errors and try again.'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('OK'),
+                                                )
+                                              ])
+                                        }
+                                    ];
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.black87,
-                                    backgroundColor:Color.fromARGB(
-                                        255, 111, 210, 255),
+                                    backgroundColor:
+                                        Color.fromARGB(255, 111, 210, 255),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(33.3 * textScaleFactor),
+                                      borderRadius: BorderRadius.circular(
+                                          33.3 * textScaleFactor),
                                     ),
                                   ),
-                                  child:  Text("Continue", style: TextStyle(fontSize: 16.2 * textScaleFactor,)),
+                                  child: Text("Continue",
+                                      style: TextStyle(
+                                        fontSize: 16.2 * textScaleFactor,
+                                      )),
                                 ),
                               ),
                               SizedBox(height: 22.5 * textScaleFactor),
@@ -145,7 +226,8 @@ class loginscreen extends StatelessWidget {
                                       endIndent: 4.5 * textScaleFactor,
                                     ),
                                   ),
-                                  Text("Or Continue with",
+                                  Text(
+                                    "Or Continue with",
                                     style: TextStyle(
                                       fontSize: 16.2 * textScaleFactor,
                                       color: Color.fromARGB(255, 72, 72, 72),
@@ -165,20 +247,24 @@ class loginscreen extends StatelessWidget {
                                   Container(
                                     width: 27 * textScaleFactor,
                                     height: 27 * textScaleFactor,
-                                    child: Image.asset("assets/images/goog.png"),
+                                    child:
+                                        Image.asset("assets/images/goog.png"),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(7.2 * textScaleFactor),
+                                    padding:
+                                        EdgeInsets.all(7.2 * textScaleFactor),
                                     child: Container(
                                       width: 27 * textScaleFactor,
                                       height: 27 * textScaleFactor,
-                                      child: Image.asset("assets/images/instagram.png"),
+                                      child: Image.asset(
+                                          "assets/images/instagram.png"),
                                     ),
                                   ),
                                   Container(
                                     width: 27 * textScaleFactor,
                                     height: 27 * textScaleFactor,
-                                    child: Image.asset('assets/images/phone.png'),
+                                    child:
+                                        Image.asset('assets/images/phone.png'),
                                   ),
                                 ],
                               ),
@@ -190,22 +276,34 @@ class loginscreen extends StatelessWidget {
                     ),
                     SizedBox(height: 9 * textScaleFactor),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4.5 * textScaleFactor, vertical: 9 * textScaleFactor),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 4.5 * textScaleFactor,
+                          vertical: 9 * textScaleFactor),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Don't have an account? ", style: TextStyle(
-                            fontSize: 13.5 * textScaleFactor,
-                            color: Colors.black87,
-                          ),),
-                          GestureDetector(
-                            child: Text("Sign Up", style: TextStyle(fontWeight: FontWeight.bold,
+                          Text(
+                            "Don't have an account? ",
+                            style: TextStyle(
                               fontSize: 13.5 * textScaleFactor,
-                              color: Colors.red,
-                            ),),
+                              color: Colors.black87,
+                            ),
+                          ),
+                          GestureDetector(
+                            child: Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13.5 * textScaleFactor,
+                                color: Colors.red,
+                              ),
+                            ),
                             onTap: () {
-                              Navigator.push(context,
-                                MaterialPageRoute(builder: (context) =>  Signup()),);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Signup()),
+                              );
                             },
                           ),
                         ],
@@ -219,5 +317,107 @@ class loginscreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildTextInput({
+    required TextEditingController controller,
+    required ValueChanged<String> onChanged,
+    required String hintText,
+    required String? errorText,
+    required IconData icon,
+  }) {
+    return TextFormField(
+      onChanged: onChanged,
+      controller: controller,
+      decoration: InputDecoration(
+        enabledBorder: _inputBorderStyle(),
+        focusedBorder: _inputBorderStyle(),
+        prefixIcon: Icon(icon, color: Color.fromARGB(220, 59, 206, 255)),
+        hintText: hintText,
+        errorText: errorText,
+      ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required ValueChanged<String> onChanged,
+    required String hintText,
+    required String? errorText,
+    required IconData icon,
+    required bool isHidden,
+    required VoidCallback onPressed,
+  }) {
+    return TextFormField(
+      onChanged: onChanged,
+      obscureText: isHidden,
+      controller: controller,
+      decoration: InputDecoration(
+        enabledBorder: _inputBorderStyle(),
+        focusedBorder: _inputBorderStyle(),
+        prefixIcon: Icon(icon, color: Color.fromARGB(220, 59, 206, 255)),
+        suffixIcon: IconButton(
+          icon: Icon(
+            isHidden ? Icons.visibility : Icons.visibility_off,
+            color: Color.fromARGB(220, 59, 206, 255),
+          ),
+          onPressed: onPressed,
+        ),
+        hintText: hintText,
+        errorText: errorText,
+      ),
+    );
+  }
+
+  OutlineInputBorder _inputBorderStyle() {
+    return OutlineInputBorder(
+      borderSide: BorderSide(color: Color.fromARGB(220, 59, 206, 255)),
+      borderRadius: BorderRadius.all(Radius.circular(20)),
+    );
+  }
+
+  void _validateEmail(String value) {
+    setState(() {
+      _emailErr = RegExp(
+        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+      ).hasMatch(value)
+          ? null
+          : 'Enter a valid email address';
+    });
+  }
+
+  void _validatePassword(String value) {
+    setState(() {
+      passwordcontroller.value = passwordcontroller.value.copyWith(
+        text: value,
+        selection: TextSelection.collapsed(offset: value.length),
+      );
+      _passwordErr = _validatePasswordRules(value);
+    });
+  }
+
+  String? _validatePasswordRules(String value) {
+    if (value.isEmpty) {
+      return 'Password cannot be empty';
+    } else {
+      return null; // Password is valid
+    }
+  }
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isPasswordHidden = !_isPasswordHidden;
+    });
+  }
+
+  bool _validateAndNavigate() {
+    _validateEmail(emailcontroller.text);
+    _validatePassword(passwordcontroller.text);
+
+    if (_emailErr == null && _passwordErr == null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -1,145 +1,138 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:http/http.dart'as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-class razor extends StatefulWidget {
-  const razor({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<razor> createState() => Razor();
+  RazorPay createState() => RazorPay();
 }
 
-class Razor extends State<razor>  {
-
-  final _razorpay = Razorpay();
-  String apiKey = 'rzp_test_s2L4Y2WSPzWud2';
-  String apiSecret = '3ZLThQy11C3HAm3fX7GRrrJC';
-
-  Map<String, dynamic> paymentData = {
-    'amount': 50000, // amount in paise (e.g., 1000 paise = Rs. 10)
-    'currency': 'INR',
-    'receipt': 'order_receipt',
-    'payment_capture': '1',
-  };
+class RazorPay extends State<HomeScreen> {
+  Razorpay? _razorpay;
 
   @override
   void initState() {
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     super.initState();
+    _razorpay = Razorpay();
+    _razorpay?.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay?.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay?.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
   void dispose() {
-    _razorpay.clear(); // Removes all listeners
     super.dispose();
+    _razorpay?.clear();
+  }
+
+  void openChecF() async {
+    var options = {
+      'key': 'rzp_test_bsrsCz0zr14pGE',
+      'amount': 20000,
+      'name': 'Healthify',
+      'description': 'Payment',
+      'prefill': {'contact': '6352707270', 'email': 'sardakamlesh3@gmail.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay?.open(options);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    Fluttertoast.showToast(
+        msg: "SUCCESS PAYMENT: ${response.paymentId}", timeInSecForIosWeb: 4);
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+        msg: "ERROR HERE: ${response.code} - ${response.message}",
+        timeInSecForIosWeb: 4);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET IS : ${response.walletName}",
+        timeInSecForIosWeb: 4);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
       appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: const Text('Payment Gateway Example',style: TextStyle(color: Colors.white),),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: const Text('Payment',
+            style: TextStyle(fontSize: 22.0, color: Color(0xFF545D68))),
       ),
-      body: Card(
-        margin: const EdgeInsets.only(left: 10,right: 10,top: 10),
-        child: ListTile(
-          title: const Text("Special Chum Chum",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 20),),
-          subtitle: const Text('Special Bengali Sweet'),
-          trailing: ElevatedButton(
-            onPressed: () => initiatePayment(),
-            child: const Text("Checkout"),
+      body: Column(children: [
+        const SizedBox(height: 16.0),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Row(
+                children: [
+                  Image.network(
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiN0-Wjh7x6nEafXRTkASF6-pVKincyB_fSA&usqp=CAU',
+                    height: 100,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text('Pant and Shirt Fabric',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold)),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text('\$1.88',
+                            style: TextStyle(
+                                fontSize: 22.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade900)),
+                        const SizedBox(height: 10.0),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
-
+        const SizedBox(height: 18.0),
+        InkWell(
+            onTap: () {
+              openChecF();
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 18.0, right: 18),
+              child: Container(
+                  width: MediaQuery.of(context).size.width - 60.0,
+                  height: 50.0,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.blue.shade900),
+                  child: Center(
+                      child: Text('Pay',
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.blue.shade50)))),
+            ))
+      ]),
     );
   }
-
-
-
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    // Do something when payment succeeds
-    // Here we get razorpay_payment_id razorpay_order_id razorpay_signature
-    Fluttertoast.showToast(
-        msg: "Payment successful. Transaction ID: ${response.paymentId}",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
-  }
-
-  void _handlePaymentError(PaymentFailureResponse response) {
-    // Do something when payment fails
-    Fluttertoast.showToast(
-        msg: "Payment failed. Reason: ${response.message}",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
-  }
-
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    // Do something when an external wallet is selected
-    Fluttertoast.showToast(
-        msg: "External wallet selected: ${response.walletName}",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.blue,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
-  }
-
-
-
-  Future<void> initiatePayment() async {
-    String apiUrl = 'https://api.razorpay.com/v1/orders';
-    // Make the API request to create an order
-    http.Response response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic ${base64Encode(utf8.encode('$apiKey:$apiSecret'))}',
-      },
-      body: jsonEncode(paymentData),
-    );
-
-    if (response.statusCode == 200) {
-      // Parse the response to get the order ID
-      var responseData = jsonDecode(response.body);
-      String orderId = responseData['id'];
-
-      // Set up the payment options
-      var options = {
-        'key': 'rzp_test_LI687ZNlRMMWdm',
-        'amount': paymentData['amount'],
-        'name': 'Sweet Corner',
-        'order_id': orderId,
-        'prefill': {'contact': '1234567890', 'email': 'test@example.com'},
-        'external': {
-          'wallets': ['paytm'] // optional, for adding support for wallets
-        }
-      };
-
-      // Open the Razorpay payment form
-      _razorpay.open(options);
-    } else {
-      // Handle error response
-      debugPrint('Error creating order: ${response.body}');
-    }
-  }
-
 }
