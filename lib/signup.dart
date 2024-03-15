@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:healthify/config/usermodel.dart';
+import 'package:healthify/config/userreposetory.dart';
+import 'package:healthify/home.dart';
+import 'package:healthify/navigation_menu.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 import 'login.dart';
+import 'config/authnication.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -35,8 +40,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-  TextEditingController();
-
+      TextEditingController();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _lnameController = TextEditingController();
 
@@ -49,6 +53,10 @@ class _SignupState extends State<Signup> {
 
   bool _isPasswordHidden = true;
   bool _isConfirmPasswordHidden = true;
+
+  authnicationfirebase authfirebase = new authnicationfirebase();
+  late Usermodel newuser;
+  final UserRepository userRepo = new UserRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -121,20 +129,36 @@ class _SignupState extends State<Signup> {
                       ),
                       SizedBox(height: 30),
                       ElevatedButton(
-                        onPressed: _validateAndNavigate,
-                        
+                        onPressed: () => [
+                          _validateAndNavigate,
+                          authfirebase.registewithemailandpassword(
+                              _emailController.text.trim(),
+                              _confirmPasswordController.text.trim()),
+                          newuser = Usermodel(
+                              mobile: _phoneNumberController.text.trim(),
+                              firstname: _nameController.text.trim(),
+                              lastname: _lnameController.text.trim(),
+                              email: _emailController.text.trim()),
+                          userRepo.saveuserrecord(newuser).then((value) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const NavigationMenu()));
+                          }),
+                        ],
+                        // [rollDice(),rollDice2()],
+
                         style: ElevatedButton.styleFrom(
-                          primary: Color.fromARGB(220, 115, 208, 239),
+                          backgroundColor: Color.fromARGB(220, 115, 208, 239),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(37),
                           ),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15),
-                          
                           child: Text(
                             "Continue",
-                            
                             style: TextStyle(
                               color: Colors.black87,
                               fontWeight: FontWeight.w700,
@@ -186,11 +210,11 @@ class _SignupState extends State<Signup> {
 
   Widget _buildPhoneNumberField() {
     return InternationalPhoneNumberInput(
+      textFieldController: _phoneNumberController,
       onInputChanged: _validatePhoneNumber,
       selectorConfig: SelectorConfig(
         selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
       ),
-
       ignoreBlank: false,
       autoValidateMode: AutovalidateMode.onUserInteraction,
       formatInput: false,
@@ -264,9 +288,9 @@ class _SignupState extends State<Signup> {
       _nameErr = value.isEmpty
           ? 'Enter Your First Name'
           : (RegExp(r'^[a-zA-Z]+$').hasMatch(value)
-          ? null
-          : 'Invalid characters. Please use only letters and spaces.') ??
-          (value.length < 2 ? 'Invalid Length' : null);
+                  ? null
+                  : 'Invalid characters. Please use only letters and spaces.') ??
+              (value.length < 2 ? 'Invalid Length' : null);
     });
   }
 
@@ -275,9 +299,9 @@ class _SignupState extends State<Signup> {
       _lnameErr = value.isEmpty
           ? 'Enter Your Last Name'
           : (RegExp(r'^[a-zA-Z]+$').hasMatch(value)
-          ? null
-          : 'Invalid characters. Please use only letters and spaces.') ??
-          (value.length < 2 ? 'Invalid Length' : null);
+                  ? null
+                  : 'Invalid characters. Please use only letters and spaces.') ??
+              (value.length < 2 ? 'Invalid Length' : null);
     });
   }
 
@@ -305,9 +329,9 @@ class _SignupState extends State<Signup> {
     setState(() {
       _confirmPasswordController.value =
           _confirmPasswordController.value.copyWith(
-            text: value,
-            selection: TextSelection.collapsed(offset: value.length),
-          );
+        text: value,
+        selection: TextSelection.collapsed(offset: value.length),
+      );
       _confirmPasswordErr = _validateConfirmPasswordRules(value);
     });
   }
@@ -354,8 +378,7 @@ class _SignupState extends State<Signup> {
 
   void _validatePhoneNumber(PhoneNumber phoneNumber) {
     setState(() {
-      if (phoneNumber.phoneNumber == null ||
-          phoneNumber.phoneNumber!.isEmpty) {
+      if (phoneNumber.phoneNumber == null || phoneNumber.phoneNumber!.isEmpty) {
         _phoneNumberErr = 'Phone number cannot be empty';
       } else if (phoneNumber.phoneNumber!.length != 13) {
         _phoneNumberErr = phoneNumber.phoneNumber!.length < 13
@@ -395,8 +418,7 @@ class _SignupState extends State<Signup> {
         builder: (context) {
           return AlertDialog(
             title: Text('Validation Error'),
-            content:
-            Text('Please fix the highlighted errors and try again.'),
+            content: Text('Please fix the highlighted errors and try again.'),
             actions: [
               TextButton(
                 onPressed: () {

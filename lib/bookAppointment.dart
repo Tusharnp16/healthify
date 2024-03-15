@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'razor_pay.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -29,7 +29,7 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
   String _problem = '';
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
-  final Razor raz= new Razor();
+ // final Razor raz= new Razor();
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -120,7 +120,7 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
             ElevatedButton(
               onPressed: () {
 
-                raz.initiatePayment();
+              //  raz.initiatePayment();
 
               },
               child: Text('Book Appointment'),
