@@ -18,8 +18,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
   int _selectedIndex = 0;
   List<Widget> widgetOptions = <Widget>[
     home(),
-    doctor(),
-    HospitalScreen(),
+    Doctor(),
+    hospital(),
     more()
   ];
 
@@ -60,8 +60,8 @@ class _NavigationMenuState extends State<NavigationMenu> {
               gap: 5,
               tabs: const [
                 GButton(icon: Icons.home, text: "Home"),
-                GButton(icon: Icons.local_hospital_outlined, text: "Hospital"),
                 GButton(icon: Icons.person, text: "Doctor"),
+                GButton(icon: Icons.local_hospital_outlined, text: "Hospital"),
                 GButton(icon: Icons.more_horiz_outlined, text: "Profile"),
               ],
               selectedIndex: _selectedIndex,

@@ -222,7 +222,7 @@ class home extends StatelessWidget {
                                       ),
                                     ),
                                     SizedBox(height: 2,),
-                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify tonybhai",
+                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify (tonybhai,Kamlesh & heamnt)",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),))
@@ -261,7 +261,7 @@ class home extends StatelessWidget {
                                       ),
                                     ),
                                     SizedBox(height: 2,),
-                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify tonybhai",
+                                    const Expanded(child: Text("New hospital in surat inaugurate by founder of healthify (tonybhai,Kamlesh & heamnt)",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),))
@@ -300,7 +300,7 @@ class home extends StatelessWidget {
                                       ),
                                     ),
                                     SizedBox(height: 2,),
-                                    const Expanded(child: Text("Tonybhai going to open new branch of healthify at Lakshadweep meeting done with PM MODI",
+                                    const Expanded(child: Text("Tonybhai(healthify founder) going to open new branch of healthify at Lakshadweep meeting done with PM MODI",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),))
