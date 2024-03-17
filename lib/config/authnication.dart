@@ -1,9 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-<<<<<<< HEAD
-
-class authnicationfirebase {
-
-=======
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:healthify/login.dart';
@@ -28,7 +23,7 @@ class authnicationfirebase {
 
 }
 
->>>>>>> origin/master
+
   final auth = FirebaseAuth.instance;
 
   Future<UserCredential> registewithemailandpassword(String email,String password) async {
