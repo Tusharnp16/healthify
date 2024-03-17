@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'razor_pay.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 void main() {
   runApp(MyApp());
 }
@@ -81,20 +80,20 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    Fluttertoast.showToast(
-        msg: "SUCCESS PAYMENT: ${response.paymentId}", timeInSecForIosWeb: 4);
+    // Fluttertoast.showToast(
+    //     msg: "SUCCESS PAYMENT: ${response.paymentId}", timeInSecForIosWeb: 4);
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    Fluttertoast.showToast(
-        msg: "ERROR HERE: ${response.code} - ${response.message}",
-        timeInSecForIosWeb: 4);
+    // Fluttertoast.showToast(
+    //     msg: "ERROR HERE: ${response.code} - ${response.message}",
+    //     timeInSecForIosWeb: 4);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    Fluttertoast.showToast(
-        msg: "EXTERNAL_WALLET IS : ${response.walletName}",
-        timeInSecForIosWeb: 4);
+    // Fluttertoast.showToast(
+    //     msg: "EXTERNAL_WALLET IS : ${response.walletName}",
+    //     timeInSecForIosWeb: 4);
   }
 
   Future<void> _selectTime(BuildContext context) async {
