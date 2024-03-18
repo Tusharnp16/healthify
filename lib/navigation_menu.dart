@@ -8,6 +8,7 @@ import 'package:healthify/login.dart';
 import 'package:healthify/more.dart';
 import 'package:healthify/profile.dart';
 
+
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({super.key});
   @override
@@ -19,7 +20,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   List<Widget> widgetOptions = <Widget>[
     home(),
     Doctor(),
-    Profile(userId: 'j9NWsGIO5hJ4YV4e4akj',),// to add the Hospital page in this u have write all the field
+    HospitalScreen(),// to add the Hospital page in this u have write all the field
     more()
   ];
 
