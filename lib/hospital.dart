@@ -157,7 +157,10 @@ class HospitalDetailsScreen extends StatelessWidget {
               Image.network(
                 hospital.photoUrl[0],
                 height: 200,
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
                 fit: BoxFit.cover,
               ),
             SizedBox(height: 20),
@@ -226,7 +229,12 @@ class HospitalDetailsScreen extends StatelessWidget {
               shrinkWrap: true,
               itemCount: hospital.address.hLoc.length,
               itemBuilder: (context, index) {
-                return Text('${hospital.address.hAdd[index]}, City: ${hospital.address.hCity[index]}, State: ${hospital.address.hState[index]} Latitude: ${hospital.address.hLoc[index].latitude}, Longitude: ${hospital.address.hLoc[index].longitude}');
+                return Text(
+                    '${hospital.address.hAdd[index]}, City: ${hospital.address
+                        .hCity[index]}, State: ${hospital.address
+                        .hState[index]} Latitude: ${hospital.address.hLoc[index]
+                        .latitude}, Longitude: ${hospital.address.hLoc[index]
+                        .longitude}');
               },
             ),
           ],
