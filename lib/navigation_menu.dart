@@ -19,7 +19,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   List<Widget> widgetOptions = <Widget>[
     home(),
     Doctor(),
-    profile(),// to add the Hospital page in this u have write all the field
+    Profile(userId: 'j9NWsGIO5hJ4YV4e4akj',),// to add the Hospital page in this u have write all the field
     more()
   ];
 
