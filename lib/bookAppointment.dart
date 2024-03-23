@@ -330,12 +330,12 @@ Widget build(BuildContext context) {
       ),
 
       StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('doctor').snapshots(),
+        stream: FirebaseFirestore.instance.collection('Users').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return CircularProgressIndicator();
           List<DropdownMenuItem> doctorDropdownItems = [];
-          for (var doctor in snapshot.data!.docs) {
-            String doctorName = doctor.get('dname');
+          for (var Users in snapshot.data!.docs) {
+            String doctorName = Users.get('Name');
             doctorDropdownItems.add(
               DropdownMenuItem(
                 child: Text(doctorName),
@@ -454,6 +454,7 @@ Widget build(BuildContext context) {
   appointments.add({
   'doctor_id': _selectedDoctor, // Reference to doctor_id
   'user_id': userId,
+    'Name ':_patientName,
   'status': 'pending',
   'reason': _problem,
   'appointment_slot': _selectedSlot,
@@ -461,15 +462,18 @@ Widget build(BuildContext context) {
   'gender': _selectedGender,
   'created_at': Timestamp.now(),
   }).then((_) {
+    openCheckout();
+
   // Appointment booked successfully
   Fluttertoast.showToast(msg: 'Appointment booked successfully');
   // Initiating payment
-  openCheckout();
+
   }).catchError((error) {
   // Error occurred while booking appointment
     // Error occurred while booking appointment
     Fluttertoast.showToast(msg: 'Failed to book appointment: $error');
   });
+
   } else {
     Fluttertoast.showToast(msg: 'Please fill all fields');
   }
