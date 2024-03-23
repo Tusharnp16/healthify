@@ -14,7 +14,10 @@ void main()async {
   // await Firebase.initializeApp();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: FirebaseOptions(apiKey: "AIzaSyBdXfG0HI9WUnbf3iARa7rBA8IXjyjcV1M", appId: "1:237419669384:android:eaefe3dd13a014754ebc3d", messagingSenderId: "237419669384", projectId: "healthify-7e48b"),
+    options: FirebaseOptions(apiKey: "AIzaSyBdXfG0HI9WUnbf3iARa7rBA8IXjyjcV1M",
+        appId: "1:237419669384:android:eaefe3dd13a014754ebc3d",
+
+        messagingSenderId: "237419669384", projectId: "healthify-7e48b"),
 
   );
   GetStorage.init();

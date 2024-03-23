@@ -69,6 +69,7 @@ class DoctorItem extends StatefulWidget {
   State<DoctorItem> createState() => _DoctorItemState();
 }
 
+
 class _DoctorItemState extends State<DoctorItem> {
   bool _showFullDetails = false;
 
@@ -92,6 +93,20 @@ class _DoctorItemState extends State<DoctorItem> {
               Text("Gender: ${widget.doctorData["Gender"] ?? ""}"),
               Text("Email: ${widget.doctorData["Email"] ?? ""}"),
               Text("Hospital: ${widget.doctorData["Hospital"] ?? ""}"),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _showFullDetails = false;
+                  });
+                },
+                child: Text(
+                  'Show Less',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ],
           )
               : GestureDetector(
@@ -101,7 +116,7 @@ class _DoctorItemState extends State<DoctorItem> {
               });
             },
             child: Text(
-              'View more detail',
+              'Show More',
               style: TextStyle(
                 color: Colors.blue,
                 fontWeight: FontWeight.bold,
@@ -113,3 +128,4 @@ class _DoctorItemState extends State<DoctorItem> {
     );
   }
 }
+

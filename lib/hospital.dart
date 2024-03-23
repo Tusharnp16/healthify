@@ -224,6 +224,7 @@ class HospitalDetailsScreen extends StatelessWidget {
             SizedBox(height: 10),
             ListView.builder(
               shrinkWrap: true,
+
               itemCount: hospital.address.hLoc.length,
               itemBuilder: (context, index) {
                 return Text('${hospital.address.hAdd[index]}, City: ${hospital.address.hCity[index]}, State: ${hospital.address.hState[index]} Latitude: ${hospital.address.hLoc[index].latitude}, Longitude: ${hospital.address.hLoc[index].longitude}');

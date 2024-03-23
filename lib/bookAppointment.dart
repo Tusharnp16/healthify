@@ -50,8 +50,8 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
   void initState() {
     super.initState();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    // _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
@@ -92,13 +92,13 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
     _showNotification();
   }
 
-  void _handlePaymentError(PaymentFailureResponse response) {
-    Fluttertoast.showToast(msg: "ERROR HERE: ${response.code} - ${response.message}", timeInSecForIosWeb: 4);
-  }
-
-  void _handleExternalWallet(ExternalWalletResponse response) {
-    Fluttertoast.showToast(msg: "EXTERNAL_WALLET IS : ${response.walletName}", timeInSecForIosWeb: 4);
-  }
+  // void _handlePaymentError(PaymentFailureResponse response) {
+  //   Fluttertoast.showToast(msg: "ERROR HERE: ${response.code} - ${response.message}", timeInSecForIosWeb: 4);
+  // }
+  //
+  // void _handleExternalWallet(ExternalWalletResponse response) {
+  //   Fluttertoast.showToast(msg: "EXTERNAL_WALLET IS : ${response.walletName}", timeInSecForIosWeb: 4);
+  // }
 
   Future<List<String>> _getDoctorSlotsForDate(String selectedDoctor, DateTime selectedDate) async {
     try {
