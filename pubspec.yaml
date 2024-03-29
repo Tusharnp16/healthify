@@ -46,6 +46,9 @@ dependencies:
   firebase_auth:
   firebase_storage:
   cloud_firestore:
+  flutter_rating_bar: ^4.0.0
+  sqflite: ^2.0.0+3
+  url_launcher:
 #  rive: ^0.9.0
   get:
   lottie: ^3.1.0
