@@ -30,13 +30,15 @@ class _ContactFormState extends State<ContactForm> {
 
   @override
   Widget build(BuildContext context) {
+    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           CircularTextField(
-            key: UniqueKey(), // Example of providing a unique key
+            key: UniqueKey(),
+            // Example of providing a unique key
             controller: _nameController,
             labelText: 'Your Name',
             validator: (value) {
@@ -47,7 +49,6 @@ class _ContactFormState extends State<ContactForm> {
             },
             keyboardType: TextInputType.text,
           ),
-
           SizedBox(height: 16.0),
           CircularTextField(
             controller: _emailController,
@@ -61,12 +62,28 @@ class _ContactFormState extends State<ContactForm> {
                 return 'Please enter a valid email';
               }
               return null;
-            }, key: UniqueKey(),
+            },
+            key: UniqueKey(),
           ),
           SizedBox(height: 16.0),
+
           TextFormField(
             controller: _messageController,
-            decoration: InputDecoration(labelText: 'Message'),
+            decoration: InputDecoration(
+              labelText: 'Message',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(40.0),
+                borderSide: BorderSide( color : Color.fromARGB(255, 111, 210, 255), width: 5.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20.0),
+                borderSide: BorderSide(color : Color.fromARGB(255, 111, 210, 255), width: 2.0),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20.0),
+                borderSide: BorderSide(color: Color.fromARGB(255, 148, 148, 148), width: 2.0),
+              ),
+            ),
             maxLines: 5,
             validator: (value) {
               if (value!.isEmpty) {
@@ -77,6 +94,13 @@ class _ContactFormState extends State<ContactForm> {
           ),
           SizedBox(height: 16.0),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black87,
+              backgroundColor: Color.fromARGB(255, 111, 210, 255),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(33.3 * textScaleFactor),
+              ),
+            ),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
                 _submitForm();

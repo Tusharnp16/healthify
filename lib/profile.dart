@@ -5,11 +5,13 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'config/util.dart';
+import 'login.dart';
 
 class Profile extends StatelessWidget {
   final String userId;
+  String? phn=globalPhoneNumber?.substring(3);
 
-  Profile({required this.userId});
+  Profile({required this.userId});z
   final controller = Get.put(ImagePickerController());
   @override
   Widget build(BuildContext context) {

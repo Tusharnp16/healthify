@@ -19,8 +19,10 @@ class loginscreen extends StatefulWidget {
 }
 
 class _loginscreenState extends State<loginscreen> {
+
   TextEditingController emailcontroller = TextEditingController();
   TextEditingController passwordcontroller = TextEditingController();
+  static String? globalPhoneNumber = "tony";
 
   String? _emailErr;
   String? _passwordErr;
