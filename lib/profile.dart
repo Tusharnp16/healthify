@@ -1,3 +1,5 @@
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,12 +8,14 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'config/util.dart';
 import 'login.dart';
+import 'constants.dart';
 
 class Profile extends StatelessWidget {
+  
   final String userId;
-  String? phn=globalPhoneNumber?.substring(3);
+  String? Email=globalEmailID;
 
-  Profile({required this.userId});z
+  Profile({required this.userId});
   final controller = Get.put(ImagePickerController());
   @override
   Widget build(BuildContext context) {
@@ -19,7 +23,7 @@ class Profile extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('Patient')
-            .doc(userId) // Assuming 'users' is the collection name
+            .doc(Email) // Assuming 'users' is the collection name
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasError) {
@@ -203,4 +207,32 @@ class Profile extends StatelessWidget {
       ),
     );
   }
+
 }
+
+class FirestoreService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getDataForCurrentUser() async {
+    // Get the current user's email
+    String? email = _auth.currentUser?.email;
+
+    if (email != null) {
+      // Query Firestore to get data associated with the current user's email
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection('Patient') // Replace 'your_collection_name' with your Firestore collection name
+          .where('email', isEqualTo: email)
+          .get();
+
+      // Return the first document found (assuming there's only one)
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first;
+      }
+    }
+
+    // Return null if no data found
+    return Future.value(null);
+  }
+}
+

@@ -8,6 +8,8 @@ import 'package:healthify/login.dart';
 import 'package:healthify/more.dart';
 import 'package:healthify/profile.dart';
 
+import 'option.dart';
+
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({super.key});
@@ -20,7 +22,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
   List<Widget> widgetOptions = <Widget>[
     home(),
     Doctor(),
-    HospitalScreen(),// to add the Hospital page in this u have write all the field
+    option(),// to add the Hospital page in this u have write all the field
     more()
   ];
 

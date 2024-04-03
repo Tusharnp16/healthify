@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:healthify/ambulance.dart';
 import 'package:healthify/faq.dart';
 import 'package:healthify/login.dart';
 import 'package:healthify/logout.dart';
 import 'package:healthify/feedback.dart';
 import 'package:healthify/contactus.dart';
 import 'package:healthify/emergancy.dart';
+import 'package:healthify/profilenew.dart';
 import 'chatbot.dart';
 import 'package:healthify/Aboutus.dart';
 import 'package:healthify/profile.dart';
@@ -27,7 +29,7 @@ class more extends StatelessWidget {
                     child: Image.asset('assets/images/admin.jpg',
                         fit: BoxFit.cover),
                   ),
-                  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> Profile(userId: "j9NWsGIO5hJ4YV4e4akj")));}
+                  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> UserProfileScreen()));}
 
               ),
             ),
@@ -39,8 +41,14 @@ class more extends StatelessWidget {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=> ChatBotScreen()));
               },),
             ListTile(
+              title: Text("Ambulance"),
+              trailing: Icon(Icons.emergency_share_rounded),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> AmbulanceScreen()));
+              },),
+            ListTile(
               title: Text("Emergancy"),
-              trailing: Icon(Icons.chat),
+              trailing: Icon(Icons.emergency),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=> EmergencyScreenBody()));
               },),

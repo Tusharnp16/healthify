@@ -66,6 +66,8 @@ Future<List<Hospitals>> fetchHospitals() async {
     return [];
   }
 }
+// Import your HospitalDetailsScreen here
+
 class HospitalScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -88,45 +90,52 @@ class HospitalScreen extends StatelessWidget {
                 final hospital = hospitals[index];
                 final imageUrl = hospital.photoUrl.isNotEmpty ? hospital.photoUrl[0] : '';
                 final locationCount = hospital.address.hLoc.length;
-                return ListTile(
-                  title: Text(hospital.name),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Specialties',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 4),
-                      Wrap(
-                        spacing: 8.0,
-                        children: hospital.specialties.map((specialty) {
-                          return Chip(
-                            label: Text(specialty),
-                          );
-                        }).toList(),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Address:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text('City: ${hospital.address.hCity[0]}, State: ${hospital.address.hState[0]}'),
-                      SizedBox(height: 8),
-                      Text(
-                        'Number of Locations: $locationCount',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blue, width: 1.0),
+                    borderRadius: BorderRadius.circular(5.0),
                   ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HospitalDetailsScreen(hospital: hospital),
-                      ),
-                    );
-                  },
+                  margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  child: ListTile(
+                    title: Text(hospital.name),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Specialties',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 4),
+                        Wrap(
+                          spacing: 8.0,
+                          children: hospital.specialties.map((specialty) {
+                            return Chip(
+                              label: Text(specialty),
+                            );
+                          }).toList(),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Address:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text('City: ${hospital.address.hCity[0]}, State: ${hospital.address.hState[0]}'),
+                        SizedBox(height: 8),
+                        Text(
+                          'Number of Locations: $locationCount',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HospitalDetailsScreen(hospital: hospital),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             );
@@ -136,6 +145,12 @@ class HospitalScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
 
 class HospitalDetailsScreen extends StatelessWidget {
   final Hospitals hospital;
@@ -148,91 +163,140 @@ class HospitalDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(hospital.name),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (hospital.photoUrl.isNotEmpty)
-              Image.network(
-                hospital.photoUrl[0],
-                height: 200,
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.cover,
+      body: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.blue, width: 2.0),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (hospital.photoUrl.isNotEmpty)
+                _buildBorderContainer(
+                  child: Image.network(
+                    hospital.photoUrl[0],
+                    height: 200,
+                    width: MediaQuery.of(context).size.width,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              SizedBox(height: 20),
+              _buildBorderContainer(
+                child: Text(
+                  'Email: ${hospital.email}',
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
-            SizedBox(height: 20),
-            Text(
-              'Email: ${hospital.email}',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Phone: ${hospital.phoneNumber}',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Website: ${hospital.website}',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Description:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              hospital.description,
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Specialties:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Wrap(
-              spacing: 8.0,
-              children: hospital.specialties.map((specialty) {
-                return Chip(
-                  label: Text(specialty),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'History:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text(
-              hospital.history.join('\n'),
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 20),
-            // Text(
-            //   'Address:',
-            //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            // ),
-            // SizedBox(height: 10),
-            // Text('Address: ${hospital.address.hAdd[0]}, City: ${hospital.address.hCity[0]}, State: ${hospital.address.hState[0]}'),
-            SizedBox(height: 20),
-            Text(
-              'Address:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            ListView.builder(
-              shrinkWrap: true,
-
-              itemCount: hospital.address.hLoc.length,
-              itemBuilder: (context, index) {
-                return Text('${hospital.address.hAdd[index]}, City: ${hospital.address.hCity[index]}, State: ${hospital.address.hState[index]} Latitude: ${hospital.address.hLoc[index].latitude}, Longitude: ${hospital.address.hLoc[index].longitude}');
-              },
-            ),
-          ],
+              SizedBox(height: 10),
+              _buildBorderContainer(
+                child: Text(
+                  'Phone: ${hospital.phoneNumber}',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+              SizedBox(height: 10),
+              _buildBorderContainer(
+                child: Text(
+                  'Website: ${hospital.website}',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+              SizedBox(height: 20),
+              _buildBorderContainer(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Description:',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      hospital.description,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              _buildBorderContainer(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Specialties:',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8.0,
+                      children: hospital.specialties.map((specialty) {
+                        return Chip(
+                          label: Text(specialty),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              _buildBorderContainer(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'History:',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      hospital.history.join('\n'),
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              _buildBorderContainer(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Address:',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 10),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: hospital.address.hLoc.length,
+                      itemBuilder: (context, index) {
+                        return Text('${hospital.address.hAdd[index]}, City: ${hospital.address.hCity[index]}, State: ${hospital.address.hState[index]} Latitude: ${hospital.address.hLoc[index].latitude}, Longitude: ${hospital.address.hLoc[index].longitude}');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  Widget _buildBorderContainer({required Widget child}) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 20.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.blue, width: 1.0),
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(12.0),
+        child: child,
+      ),
+    );
+  }
 }
+
+

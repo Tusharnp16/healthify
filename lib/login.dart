@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:healthify/config/authnication.dart';
+import 'package:healthify/constants.dart';
 import 'package:healthify/home.dart';
 import 'package:healthify/navigation_menu.dart';
 import 'package:healthify/signup.dart';
@@ -20,9 +22,22 @@ class loginscreen extends StatefulWidget {
 
 class _loginscreenState extends State<loginscreen> {
 
-  TextEditingController emailcontroller = TextEditingController();
+
+  final TextEditingController emailcontroller = TextEditingController();
   TextEditingController passwordcontroller = TextEditingController();
-  static String? globalPhoneNumber = "tony";
+  //static String? globalPhoneNumber = "tony";
+
+
+  //String globalemail = emailcontroller.text;
+  // if (emailcontroller.text.isNotEmpty) {
+  //
+  // final String noooidname = emailcontroller.text;
+  // // Now you can use the newid variable as needed
+  // } else {
+  // // Handle the case where the emailcontroller has no text entered
+  // print('TextEditingController is empty');
+  // }
+
 
   String? _emailErr;
   String? _passwordErr;
@@ -37,10 +52,20 @@ class _loginscreenState extends State<loginscreen> {
   FirebaseAuth auth = FirebaseAuth.instance;
   User? user;
 
+
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+
+    String emailID= emailcontroller.text.toString();
+
+    @override
+    void initState(){
+      super.initState();
+      globalEmailID =emailID;
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -71,7 +96,7 @@ class _loginscreenState extends State<loginscreen> {
                         children: [
                           Transform(
                             transform:
-                                Matrix4.translationValues(28.0, -21.0, 0.0),
+                            Matrix4.translationValues(28.0, -21.0, 0.0),
                             child: Row(
                               children: [
                                 Container(
@@ -182,15 +207,15 @@ class _loginscreenState extends State<loginscreen> {
                                         {
                                           authfirebase
                                               .loginwithemailandpassword(
-                                                  emailcontroller.text.trim(),
-                                                  passwordcontroller.text
-                                                      .trim())
+                                              emailcontroller.text.trim(),
+                                              passwordcontroller.text
+                                                  .trim())
                                               .then((value) {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        const NavigationMenu()));
+                                                    const NavigationMenu()));
                                           }),
                                         }
                                       else
@@ -205,15 +230,16 @@ class _loginscreenState extends State<loginscreen> {
                                                     Navigator.of(context).pop();
                                                   },
                                                   child: Text('OK'),
-                                                )
+                                                ),
                                               ])
+
                                         }
                                     ];
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.black87,
                                     backgroundColor:
-                                        Color.fromARGB(255, 111, 210, 255),
+                                    Color.fromARGB(255, 111, 210, 255),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
                                           33.3 * textScaleFactor),
@@ -257,13 +283,13 @@ class _loginscreenState extends State<loginscreen> {
                                       width: 27 * textScaleFactor,
                                       height: 27 * textScaleFactor,
                                       child:
-                                          Image.asset("assets/images/goog.png"),
+                                      Image.asset("assets/images/goog.png"),
                                     ),
                                     onTap: signinwithgoogle,
                                   ),
                                   Padding(
                                     padding:
-                                        EdgeInsets.all(7.2 * textScaleFactor),
+                                    EdgeInsets.all(7.2 * textScaleFactor),
                                     child: Container(
                                       width: 27 * textScaleFactor,
                                       height: 27 * textScaleFactor,
@@ -275,7 +301,7 @@ class _loginscreenState extends State<loginscreen> {
                                     width: 27 * textScaleFactor,
                                     height: 27 * textScaleFactor,
                                     child:
-                                        Image.asset('assets/images/phone.png'),
+                                    Image.asset('assets/images/phone.png'),
                                   ),
                                 ],
                               ),
@@ -432,89 +458,36 @@ class _loginscreenState extends State<loginscreen> {
     }
   }
 
-  // signinwithgoogle() async{
-  //
-  //   final GoogleSignIn googleSignIn = GoogleSignIn();
-  //
-  //   final GoogleSignInAccount? googleSignInAccount =
-  //   await googleSignIn.signIn();
-  //
-  //   if (googleSignInAccount != null) {
-  //   final GoogleSignInAuthentication googleSignInAuthentication =
-  //   await googleSignInAccount.authentication;
-  //
-  //   final AuthCredential credential = GoogleAuthProvider.credential(
-  //   accessToken: googleSignInAuthentication.accessToken,
-  //   idToken: googleSignInAuthentication.idToken,
-  //   );
-  //
-  //   try {
-  //   final UserCredential userCredential =
-  //   await auth.signInWithCredential(credential);
-  //
-  //   user = userCredential.user;
-  //   } on FirebaseAuthException catch (e) {
-  //   if (e.code == 'account-exists-with-different-credential') {
-  //   // handle the error here
-  //   }
-  //   else if (e.code == 'invalid-credential') {
-  //   // handle the error here
-  //   }
-  //   } catch (e) {
-  //   // handle the error here
-  //   }
-  //   }
-  //
-  //   return user;
-  //   }
-
   signinwithgoogle() async{
 
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     try {
-        final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
 
-        if(googleSignInAccount != null) {
-          final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
+      if(googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount.authentication;
 
-          final AuthCredential credential = GoogleAuthProvider.credential(
-            accessToken: googleSignInAuthentication.accessToken,
-            idToken: googleSignInAuthentication.idToken,
-          );
-          await auth.signInWithCredential(credential);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => NavigationMenu()));
-        }
-
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'account-exists-with-different-credential') {
-          // handle the error here
-        }
-        else if (e.code == 'invalid-credential') {
-          // handle the error here
-        }
-      } catch (e) {
-        print("error");
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+        await auth.signInWithCredential(credential);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => NavigationMenu()));
       }
-    }
 
-  // Future<UserCredential> signInWithGoogle() async {
-  //   // Trigger the authentication flow
-  //   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //
-  //   // Obtain the auth details from the request
-  //   final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-  //
-  //   // Create a new credential
-  //   final credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth?.accessToken,
-  //     idToken: googleAuth?.idToken,
-  //   );
-  //
-  //   // Once signed in, return the UserCredential
-  //   return await FirebaseAuth.instance.signInWithCredential(credential);
-  // }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        // handle the error here
+      }
+      else if (e.code == 'invalid-credential') {
+        // handle the error here
+      }
+    } catch (e) {
+      print("error");
+    }
+  }
 
 }
 
