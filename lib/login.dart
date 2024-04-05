@@ -135,7 +135,7 @@ class _loginscreenState extends State<loginscreen> {
                       child: Container(
                         width: screenSize.width,
                         // Adjust the width of the container as needed
-                        height: screenSize.height/2,
+                        height: screenSize.width,
                         decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(36)),
                           color: Colors.white,

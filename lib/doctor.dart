@@ -72,12 +72,28 @@ class DoctorItem extends StatefulWidget {
 
 class _DoctorItemState extends State<DoctorItem> {
   bool _showFullDetails = false;
+  Uint8List? _imageBytes;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  Future<void> _loadImage() async {
+    if (widget.doctorData["image_url"] != null) {
+      Uint8List? bytes = await widget.getImage(widget.doctorData["image_url"]);
+      setState(() {
+        _imageBytes = bytes;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundImage: MemoryImage(Uint8List.fromList(base64Decode(widget.doctorData["image_base64"] ?? ""))),
+        backgroundImage: _imageBytes != null ? MemoryImage(_imageBytes!) : null,
       ),
       title: Text("${widget.doctorData["Name"] ?? ""}"),
       subtitle: Column(
