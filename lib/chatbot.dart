@@ -25,14 +25,17 @@ class _ChatScreenPageState extends State<ChatScreenPage> {
   Map<String, String> _responses = {
   'how can we book appoiment?': 'you can book via appoiment page!',
   'what if my i cancel my appoiment?': 'you will get all refund within 7 buissness days',
-  'tell me founder name?': 'it was founded by three genius students from sdj named tony,kony,hony',
+  'tell me founder name?': 'it was founded by three genius students from sdj named tushar,kamlesh,hemant',
   'what happens if I miss my scheduled appointment?': 'You have to schedule again and you can not get refund',
   'what is the process for booking an appointment through the app?': 'You can simply book through appoiment page from homw screen',
   'is it possible to cancel or reschedule an existing appointment?': 'yes, it is as simple as drinking water',
   'can I book appointments for multiple family members?':'Yes,why not you can even schedule your neighbour appoiment!!!',
    ' Can I book appointments with multiple doctors in one session?':'Currently, our system allows booking appointments with one doctor at a time. If you need appointments with multiple doctors, you''ll need to book them separately.',
 'Are virtual or telemedicine appointments available?':'Yes, we offer virtual appointments through telemedicine services. You can book a virtual appointment with a healthcare provider through our application.',
-'What information do I need to provide during the appointment booking process?' : 'During the booking process, you''ll need to provide basic information such as your name, contact details, reason for the appointment, and any relevant medical history.'
+'What information do I need to provide during the appointment booking process?' : 'During the booking process, you''ll need to provide basic information such as your name, contact details, reason for the appointment, and any relevant medical history.',
+    'hi':'Hello from Healthify',
+    'hello':'Hello from Healthify',
+    'healthify founder name ':'it was founded by three genius students from sdj named tushar,kamlesh,hemant'
   };
 
 void _sendMessage() {
