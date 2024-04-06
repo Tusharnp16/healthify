@@ -32,7 +32,7 @@ class more extends StatelessWidget {
                     child: Image.asset('assets/images/admin.jpg',
                         fit: BoxFit.cover),
                   ),
-                  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> Profile()));}
+                  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> UserProfileScreen()));}
 
               ),
             ),

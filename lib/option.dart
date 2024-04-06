@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:healthify/hospital.dart';
 
 import 'doctor.dart';
+import 'hospitals.dart';
 
 class option extends StatelessWidget {
   @override
@@ -17,7 +18,7 @@ class option extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HospitalScreen()));
+                            builder: (context) => HospitalListPage()));
                   },
 
                   icon: Image.asset("assets/images/hospital.jpg")),
