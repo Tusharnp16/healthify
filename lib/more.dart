@@ -12,6 +12,9 @@ import 'chatbot.dart';
 import 'package:healthify/Aboutus.dart';
 import 'package:healthify/profile.dart';
 
+import 'config/privacy.dart';
+import 'config/termsandcon.dart';
+
 
 class more extends StatelessWidget {
   @override
@@ -29,7 +32,7 @@ class more extends StatelessWidget {
                     child: Image.asset('assets/images/admin.jpg',
                         fit: BoxFit.cover),
                   ),
-                  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> UserProfileScreen()));}
+                  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> Profile()));}
 
               ),
             ),
@@ -38,7 +41,7 @@ class more extends StatelessWidget {
               title: Text("ChatBot"),
               trailing: Icon(Icons.chat),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=> ChatBotScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> ChatScreenPage()));
               },),
             ListTile(
               title: Text("Ambulance"),
@@ -78,6 +81,28 @@ class more extends StatelessWidget {
               trailing: Icon(Icons.question_mark),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=> FAQ()));
+              },
+            ),
+            ListTile(
+              title: const Text('Privacy Policy'),
+              trailing: Icon(Icons.privacy_tip),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  PrivacyPolicyPage()),
+                );
+                // Navigate to privacy policy page
+              },
+            ),
+            ListTile(
+              title: const Text('Terms of Service'),
+              trailing: Icon(Icons.private_connectivity_rounded),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  TermsAndConditionsPage()),
+                );
+                // Navigate to terms of service page
               },
             ),
             ListTile(

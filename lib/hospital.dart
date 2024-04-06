@@ -41,7 +41,7 @@ class Address {
 
 Future<List<Hospitals>> fetchHospitals() async {
   try {
-    final hospitals = await FirebaseFirestore.instance.collection('hospital').get();
+    final hospitals = await FirebaseFirestore.instance.collection('hospitals').get();
 
     return hospitals.docs.map((doc) {
       return Hospitals(
