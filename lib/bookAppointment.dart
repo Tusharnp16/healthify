@@ -33,14 +33,17 @@ class AppointmentBookingPage extends StatefulWidget {
 }
 
 class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   String _patientName = '';
   String _phoneNo = '';
   String _problem = '';
+  String _pastMedicalHistory = ''; // New field for past medical history
   String _selectedDoctor = '';
   DateTime _selectedDate = DateTime.now();
   DateTime? _selectedDOB;
-  String _selectedGender = '';
   TimeOfDay? _selectedSlot;
+  String _selectedGender = '';
   String? doctorId;
   String? gdoctorName;
   String? check;
@@ -82,7 +85,6 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    Fluttertoast.showToast(msg: "SUCCESS PAYMENT: ${response.paymentId}", timeInSecForIosWeb: 4);
     // Create and save receipt upon successful payment
     File pdfFile = await _createReceipt();
     // Navigate to PdfViewScreen to display the PDF
@@ -94,6 +96,8 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
     );
     // Show notification for receipt download
     _showNotification();
+    // Insert data into Firestore only after payment success
+    _insertAppointmentData();
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -117,6 +121,7 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
                 'Patient Name: $_patientName\n'
                 'Phone Number: $_phoneNo\n'
                 'Problem Faced: $_problem\n'
+                'Past Medical History: $_pastMedicalHistory\n' // Include past medical history in the receipt
                 'Selected Doctor: $_selectedDoctor\n'
                 'Appointment Date: ${DateFormat('EEEE, MMM d, yyyy').format(_selectedDate)}\n'
                 'Date of Birth: ${_selectedDOB != null ? DateFormat('yyyy-MM-dd').format(_selectedDOB!) : ''}\n'
@@ -165,10 +170,57 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
     );
   }
 
-  void _showNotificationDownload() async {
-    var android = AndroidNotificationDetails('channelId', 'channelName', priority: Priority.high, importance: Importance.max);
-    var platform = NotificationDetails(android: android);
-    await flutterLocalNotificationsPlugin.show(0, 'Receipt Downloaded', 'Your receipt has been downloaded', platform, payload: '');
+  void _insertAppointmentData() {
+    // Check if required fields are filled
+    if (_patientName.isNotEmpty &&
+        _phoneNo.isNotEmpty &&
+        _problem.isNotEmpty &&
+        _selectedDoctor.isNotEmpty &&
+        _selectedDOB != null &&
+        _selectedGender.isNotEmpty) {
+      // Generate a unique user_id
+      String userId = DateTime.now().millisecondsSinceEpoch.toString();
+      // Insert data into Firestore
+      appointments.add({
+        'doctor_id': doctorId,
+        'user_id': userId,
+        'Name': _patientName,
+        'status': 'pending',
+        'reason': _problem,
+        // Include past medical history only if not empty
+        if (_pastMedicalHistory.isNotEmpty) 'past_medical_history': _pastMedicalHistory,
+        'dob': _selectedDOB,
+        'gender': _selectedGender,
+        'created_at': Timestamp.now(),
+        'timeSlot': _selectedSlot,
+      }).then((_) {
+        // Appointment booked successfully
+        Fluttertoast.showToast(msg: 'Appointment booked successfully');
+      }).catchError((error) {
+        // Error occurred while booking appointment
+        Fluttertoast.showToast(msg: 'Failed to book appointment: $error');
+      });
+    } else {
+      // Show validation messages for each empty required field
+      if (_patientName.isEmpty) {
+        Fluttertoast.showToast(msg: 'Please enter Patient Name');
+      }
+      if (_phoneNo.isEmpty) {
+        Fluttertoast.showToast(msg: 'Please enter Phone Number');
+      }
+      if (_problem.isEmpty) {
+        Fluttertoast.showToast(msg: 'Please enter Problem Faced');
+      }
+      if (_selectedDoctor.isEmpty) {
+        Fluttertoast.showToast(msg: 'Please select Doctor');
+      }
+      if (_selectedDOB == null) {
+        Fluttertoast.showToast(msg: 'Please select Date of Birth');
+      }
+      if (_selectedGender.isEmpty) {
+        Fluttertoast.showToast(msg: 'Please select Gender');
+      }
+    }
   }
 
   @override
@@ -179,209 +231,225 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Patient Name'),
-              onChanged: (value) {
-                setState(() {
-                  _patientName = value;
-                });
-              },
-            ),
-            SizedBox(height: 12.0),
-            TextField(
-              decoration: InputDecoration(labelText: 'Phone Number'),
-              keyboardType: TextInputType.phone,
-              onChanged: (value) {
-                setState(() {
-                  _phoneNo = value;
-                });
-              },
-            ),
-            SizedBox(height: 12.0),
-            TextField(
-              decoration: InputDecoration(labelText: 'Problem Faced'),
-              onChanged: (value) {
-                setState(() {
-                  _problem = value;
-                });
-              },
-            ),
-            SizedBox(height: 12.0),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(labelText: 'Date of Birth'),
-                    readOnly: true,
-                    controller: TextEditingController(
-                        text: _selectedDOB != null ? DateFormat('yyyy-MM-dd').format(_selectedDOB!) : ''),
-                    onTap: () async {
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDOB ?? DateTime.now(),
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime.now(),
-                      );
-                      if (picked != null && picked != _selectedDOB) {
-                        setState(() {
-                          _selectedDOB = picked;
-                        });
-                      }
-                    },
-                  ),
-                ),
-                SizedBox(width: 12.0),
-              ],
-            ),
-            SizedBox(height: 12.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Gender'),
-                Row(
-                  children: [
-                    Radio<String>(
-                      value: 'Male',
-                      groupValue: _selectedGender,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedGender = value!;
-                        });
-                      },
-                    ),
-                    Text('Male'),
-                    Radio<String>(
-                      value: 'Female',
-                      groupValue: _selectedGender,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedGender = value!;
-                        });
-                      },
-                    ),
-                    Text('Female'),
-                    Radio<String>(
-                      value: 'Other',
-                      groupValue: _selectedGender,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedGender = value!;
-                        });
-                      },
-                    ),
-                    Text('Other'),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 12.0),
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('doctors').snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) return CircularProgressIndicator();
-                List<DropdownMenuItem> doctorDropdownItems = [];
-                for (var doctor in snapshot.data!.docs) {
-                  gdoctorName = doctor.get('name');
-                  doctorDropdownItems.add(
-                    DropdownMenuItem(
-                      child: Text(gdoctorName!),
-                      value: gdoctorName,
-                    ),
-                  );
-                }
-                return Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: DropdownButton(
-                        items: doctorDropdownItems,
-                        onChanged: (value) async {
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Patient Name'),
+                onChanged: (value) {
+                  setState(() {
+                    _patientName = value;
+                  });
+                },
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter Patient Name';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 12.0),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Phone Number'),
+                keyboardType: TextInputType.phone,
+                onChanged: (value) {
+                  setState(() {
+                    _phoneNo = value;
+                  });
+                },
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter Phone Number';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 12.0),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Problem Faced'),
+                onChanged: (value) {
+                  setState(() {
+                    _problem = value;
+                  });
+                },
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter Problem Faced';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 12.0),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Past Medical History'), // New field for past medical history
+                onChanged: (value) {
+                  setState(() {
+                    _pastMedicalHistory = value;
+                  });
+                },
+              ),
+              SizedBox(height: 12.0),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(labelText: 'Date of Birth'),
+                      readOnly: true,
+                      controller: TextEditingController(
+                          text: _selectedDOB != null ? DateFormat('yyyy-MM-dd').format(_selectedDOB!) : ''),
+                      onTap: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: _selectedDOB ?? DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null && picked != _selectedDOB) {
                           setState(() {
-                            _selectedDoctor = value.toString();
-
-                            _fetchDoctorInfo(_selectedDoctor);
+                            _selectedDOB = picked;
+                          });
+                        }
+                      },
+                      validator: (value) {
+                        if (_selectedDOB == null) {
+                          return 'Please select Date of Birth';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 12.0),
+                ],
+              ),
+              SizedBox(height: 12.0),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Gender'),
+                  Row(
+                    children: [
+                      Radio<String>(
+                        value: 'Male',
+                        groupValue: _selectedGender,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedGender = value!;
                           });
                         },
-                        value: _selectedDoctor.isNotEmpty ? _selectedDoctor : null,
-                        hint: Text('Select Doctor'),
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
-            SizedBox(height: 12.0),
-            // Date selection
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    'Appointment Date: ${DateFormat('EEEE, MMM d, yyyy').format(_selectedDate)}',
+                      Text('Male'),
+                      Radio<String>(
+                        value: 'Female',
+                        groupValue: _selectedGender,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedGender = value!;
+                          });
+                        },
+                      ),
+                      Text('Female'),
+                      Radio<String>(
+                        value: 'Other',
+                        groupValue: _selectedGender,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedGender = value!;
+                          });
+                        },
+                      ),
+                      Text('Other'),
+                    ],
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () => _selectDate(context),
-                  child: Text('Select Date'),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text('Select Time Slot'),
-                _buildSlotsButtons(), // Display slots using buttons
-              ],
-            ),
+                ],
+              ),
+              SizedBox(height: 12.0),
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance.collection('doctors').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return CircularProgressIndicator();
+                  List<DropdownMenuItem> doctorDropdownItems = [];
+                  for (var doctor in snapshot.data!.docs) {
+                    gdoctorName = doctor.get('name');
+                    doctorDropdownItems.add(
+                      DropdownMenuItem(
+                        child: Text(gdoctorName!),
+                        value: gdoctorName,
+                      ),
+                    );
+                  }
+                  return Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: DropdownButtonFormField(
+                          items: doctorDropdownItems,
+                          onChanged: (value) async {
+                            setState(() {
+                              _selectedDoctor = value.toString();
 
-            SizedBox(height: 12.0),
+                              _fetchDoctorInfo(_selectedDoctor);
+                            });
+                          },
+                          value: _selectedDoctor.isNotEmpty ? _selectedDoctor : null,
+                          hint: Text('Select Doctor'),
+                          validator: (value) {
+                            if (_selectedDoctor.isEmpty) {
+                              return 'Please select Doctor';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              SizedBox(height: 12.0),
+              // Date selection
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      'Appointment Date: ${DateFormat('EEEE, MMM d, yyyy').format(_selectedDate)}',
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => _selectDate(context),
+                    child: Text('Select Date'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.0),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('Select Time Slot :'),
+                  SizedBox(width: 12.0),
 
-            ElevatedButton(
-              onPressed: () {
-                print(doctorId);
-                print(check);
-                // Check if all fields are filled
-                if (_patientName.isNotEmpty &&
-                    _phoneNo.isNotEmpty &&
-                    _problem.isNotEmpty &&
-                    _selectedDoctor.isNotEmpty &&
-                    _selectedDOB != null &&
-                    _selectedGender.isNotEmpty) {
-                  // Generate a unique user_id
-                  String userId = DateTime.now().millisecondsSinceEpoch.toString();
-                  // Insert data into Firestore
-                  appointments.add({
-                    'doctor_id': doctorId,
-                    'user_id': userId,
-                    'Name': _patientName,
-                    'status': 'pending',
-                    'reason': _problem,
-                    'dob': _selectedDOB,
-                    'gender': _selectedGender,
-                    'created_at': Timestamp.now(),
-                  }).then((_) {
+                      _buildSlotsButtons(),
+
+                   // Display slots using buttons
+                ],
+              ),
+
+              SizedBox(height: 12.0),
+
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
                     openCheckout();
-                    // Appointment booked successfully
-                    Fluttertoast.showToast(msg: 'Appointment booked successfully');
-                    // Initiating payment
-                  }).catchError((error) {
-                    // Error occurred while booking appointment
-                    Fluttertoast.showToast(msg: 'Failed to book appointment: $error');
-                  });
-                } else {
-                  Fluttertoast.showToast(msg: 'Please fill all fields');
-                }
-              },
-              child: Text('Book Appointment'),
-            ),
-            SizedBox(height: 12.0),
-            ElevatedButton(
-              onPressed: _downloadReceipt,
-              child: Text('Download Receipt'),
-            ),
-          ],
+                  }
+                },
+                child: Text('Book Appointment'),
+              ),
+              SizedBox(height: 12.0),
+              ElevatedButton(
+                onPressed: _downloadReceipt,
+                child: Text('Download Receipt'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -422,7 +490,6 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
     }
   }
 
-
   void _fetchWeeklySlots(String day) async {
     try {
       final DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -453,48 +520,45 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
   }
 
   Widget _buildSlotsButtons() {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: _selectedSlots.map<Widget>((TimeOfDay? slot) {
         bool isSelected = _selectedSlot == slot; // Check if current slot is selected
-        if (slot != null) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                // Handle slot selection
-                setState(() {
-                  _selectedSlot = slot; // Update selected slot
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isSelected ? Colors.green : null, // Change button color if selected
-              ),
-              child: Text(
-                '${slot.format(context)}',
-                style: TextStyle(
-                  color: isSelected ? Colors.white : null, // Change text color if selected
-                ),
+        return Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: ElevatedButton(
+            onPressed: () {
+              // Handle slot selection
+              setState(() {
+                _selectedSlot = slot;
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isSelected ? Colors.green : null, // Change button color if selected
+            ),
+            child: Text(
+              '${slot!.format(context)}',
+              style: TextStyle(
+                color: isSelected ? Colors.white : null, // Change text color if selected
               ),
             ),
-          );
-        } else {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text('No slots available'),
-          );
-        }
+          ),
+        );
       }).toList(),
     );
   }
-
-
 
   Future<void> _downloadReceipt() async {
     // Create and save the receipt
     await _createReceipt();
     // Show notification for download
     _showNotificationDownload();
+  }
+
+  void _showNotificationDownload() async {
+    var android = AndroidNotificationDetails('channelId', 'channelName', priority: Priority.high, importance: Importance.max);
+    var platform = NotificationDetails(android: android);
+    await flutterLocalNotificationsPlugin.show(0, 'Receipt Downloaded', 'Your receipt has been downloaded', platform, payload: '');
   }
 }
 
