@@ -12,7 +12,7 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:lottie/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 class loginscreen extends StatefulWidget {
   const loginscreen({Key? key}) : super(key: key);
 
@@ -64,7 +64,7 @@ class _loginscreenState extends State<loginscreen> {
     @override
     void initState(){
       super.initState();
-      globalEmailID =emailID;
+      // globalEmailID =emailID;
     }
 
     return Scaffold(
@@ -117,9 +117,9 @@ class _loginscreenState extends State<loginscreen> {
                                 SizedBox(width: 9.0),
                                 Text(
                                   "Welcome Back !!,\nSign In",
-                                  style: TextStyle(
+                                  style: GoogleFonts.dancingScript(
                                     fontSize: 27 * textScaleFactor,
-                                    color: Color.fromARGB(255, 72, 72, 72),
+                                    color: Colors.black87,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -246,9 +246,12 @@ class _loginscreenState extends State<loginscreen> {
                                     ),
                                   ),
                                   child: Text("Continue",
-                                      style: TextStyle(
-                                        fontSize: 16.2 * textScaleFactor,
-                                      )),
+                                      style: GoogleFonts.dancingScript(
+                                        fontSize: 22.7 * textScaleFactor,
+                                        color: Colors.black87,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                  ),
                                 ),
                               ),
                               SizedBox(height: 22.5 * textScaleFactor),
@@ -321,9 +324,10 @@ class _loginscreenState extends State<loginscreen> {
                         children: [
                           Text(
                             "Don't have an account? ",
-                            style: TextStyle(
-                              fontSize: 13.5 * textScaleFactor,
+                            style: GoogleFonts.dancingScript(
+                              fontSize: 18 * textScaleFactor,
                               color: Colors.black87,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           GestureDetector(
@@ -452,11 +456,43 @@ class _loginscreenState extends State<loginscreen> {
     _validatePassword(passwordcontroller.text);
 
     if (_emailErr == null && _passwordErr == null) {
+      // Call the login method
+      authfirebase
+          .loginwithemailandpassword(
+          emailcontroller.text.trim(),
+          passwordcontroller.text.trim())
+          .then((value) {
+        // Navigate only if authentication is successful
+        if (value != null) {
+          // Fetch user data and store it in global variables
+          authfirebase.getUserData(emailcontroller.text.trim()).then((userData) {
+            if (userData != null) {
+              globalEmailID = userData['Email'];
+              globalDocID = value.user?.uid;
+              globalFName = userData['First Name'];
+              globalLName = userData['Last name'];
+              globalMobile = userData['Mobile'];
+              globalGender =userData['Gender'];
+              print(globalEmailID);
+              print(globalDocID);
+              print(globalFName);
+              print(globalMobile);
+              print(globalGender);
+              // Navigate to home screen or any other screen
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NavigationMenu()));
+            }
+          });
+        }
+      });
       return true;
     } else {
       return false;
     }
   }
+
 
   signinwithgoogle() async{
 

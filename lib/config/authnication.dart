@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -36,7 +37,18 @@ class authnicationfirebase {
       throw "Check  Your INternet Connection";
     }
   }
+  Future<Map<String, dynamic>?> getUserData(String email) async {
+    // Implement logic to fetch user data from your backend (Firestore in this case)
+    final userCollection = FirebaseFirestore.instance.collection('huser');
+    final docSnapshot = await userCollection.where('Email', isEqualTo: email).get();
 
+    if (docSnapshot.docs.isNotEmpty) {
+      final userData = docSnapshot.docs.first.data();
+      return userData;
+    } else {
+      return null;  // No user found with the provided email
+    }
+  }
   Future<UserCredential> loginwithemailandpassword(String email,String password) async {
     try{
       return await auth.signInWithEmailAndPassword(email: email, password: password);

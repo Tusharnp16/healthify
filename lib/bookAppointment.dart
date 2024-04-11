@@ -37,13 +37,17 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
   String _phoneNo = '';
   String _problem = '';
   String _selectedDoctor = '';
-  String _selectedSlot = '';
   DateTime _selectedDate = DateTime.now();
   DateTime? _selectedDOB;
   String _selectedGender = '';
+  TimeOfDay? _selectedSlot;
+  String? doctorId;
+  String? gdoctorName;
+  String? check;
+  List<TimeOfDay?> _selectedSlots = [];
   final Razorpay _razorpay = Razorpay();
-  CollectionReference appointments = FirebaseFirestore.instance.collection('appointmentsd');
-  CollectionReference doctors = FirebaseFirestore.instance.collection('doctor');
+  CollectionReference appointments = FirebaseFirestore.instance.collection('appointments');
+  CollectionReference doctors = FirebaseFirestore.instance.collection('doctors');
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   @override
@@ -51,7 +55,7 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
     super.initState();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
@@ -92,57 +96,12 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
     _showNotification();
   }
 
-   void _handlePaymentError(PaymentFailureResponse response) {
-     Fluttertoast.showToast(msg: "ERROR HERE: ${response.code} - ${response.message}", timeInSecForIosWeb: 4);
-   }
-
-   void _handleExternalWallet(ExternalWalletResponse response) {
-    Fluttertoast.showToast(msg: "EXTERNAL_WALLET IS : ${response.walletName}", timeInSecForIosWeb: 4);
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(msg: "ERROR HERE: ${response.code} - ${response.message}", timeInSecForIosWeb: 4);
   }
 
-  Future<List<String>> _getDoctorSlotsForDate(String selectedDoctor, DateTime selectedDate) async {
-    try {
-      DocumentSnapshot<Map<String, dynamic>> snapshot =
-      await FirebaseFirestore.instance.collection('doctor').doc(selectedDoctor).get();
-      if (snapshot.exists) {
-        Map<String, dynamic> availability = snapshot.data()!['davail'];
-        String dayOfWeek = DateFormat('EEEE').format(selectedDate);
-        String dayKey = '';
-        switch (dayOfWeek) {
-          case 'Monday':
-            dayKey = 'damon';
-            break;
-          case 'Tuesday':
-            dayKey = 'datue';
-            break;
-          case 'Wednesday':
-            dayKey = 'dawed';
-            break;
-          case 'Thursday':
-            dayKey = 'dathu';
-            break;
-          case 'Friday':
-            dayKey = 'dafri';
-            break;
-          case 'Saturday':
-            dayKey = 'dasat';
-            break;
-          case 'Sunday':
-            dayKey = 'dasun';
-            break;
-          default:
-          // Handle invalid day
-            break;
-        }
-        List<String> slots = availability[dayKey]?.cast<String>() ?? [];
-        return slots;
-      } else {
-        return [];
-      }
-    } catch (e) {
-      print('Error fetching slots: $e');
-      return [];
-    }
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(msg: "EXTERNAL_WALLET IS : ${response.walletName}", timeInSecForIosWeb: 4);
   }
 
   Future<File> _createReceipt() async {
@@ -159,7 +118,6 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
                 'Phone Number: $_phoneNo\n'
                 'Problem Faced: $_problem\n'
                 'Selected Doctor: $_selectedDoctor\n'
-                'Selected Slot: $_selectedSlot\n'
                 'Appointment Date: ${DateFormat('EEEE, MMM d, yyyy').format(_selectedDate)}\n'
                 'Date of Birth: ${_selectedDOB != null ? DateFormat('yyyy-MM-dd').format(_selectedDOB!) : ''}\n'
                 'Gender: $_selectedGender\n'
@@ -207,309 +165,337 @@ class _AppointmentBookingPageState extends State<AppointmentBookingPage> {
     );
   }
 
+  void _showNotificationDownload() async {
+    var android = AndroidNotificationDetails('channelId', 'channelName', priority: Priority.high, importance: Importance.max);
+    var platform = NotificationDetails(android: android);
+    await flutterLocalNotificationsPlugin.show(0, 'Receipt Downloaded', 'Your receipt has been downloaded', platform, payload: '');
+  }
 
-
-    void _showNotificationDownload() async {
-  var android = AndroidNotificationDetails(
-      'channelId', 'channelName', priority: Priority.high, importance: Importance.max);
-  var platform = NotificationDetails(android: android);
-  await flutterLocalNotificationsPlugin.show(
-      0, 'Receipt Downloaded', 'Your receipt has been downloaded', platform,
-      payload: '');
-}
-
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
         title: Text('Book Appointment'),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-        TextField(
-        decoration: InputDecoration(labelText: 'Patient Name'),
-        onChanged: (value) {
-          setState(() {
-            _patientName = value;
-          });
-        },
-      ),
-      SizedBox(height: 12.0),
-      TextField(
-        decoration: InputDecoration(labelText: 'Phone Number'),
-        keyboardType: TextInputType.phone,
-        onChanged: (value) {
-          setState(() {
-            _phoneNo = value;
-          });
-        },
-      ),
-      SizedBox(height: 12.0),
-      TextField(
-        decoration: InputDecoration(labelText: 'Problem Faced'),
-        onChanged: (value) {
-          setState(() {
-            _problem = value;
-          });
-        },
-      ),
-      SizedBox(height: 12.0),
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(labelText: 'Date of Birth'),
-              readOnly: true,
-              controller: TextEditingController(
-                  text: _selectedDOB != null
-                      ? DateFormat('yyyy-MM-dd').format(_selectedDOB!)
-                      : ''),
-              onTap: () async {
-                final DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: _selectedDOB ?? DateTime.now(),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
-                );
-                if (picked != null && picked != _selectedDOB) {
-                  setState(() {
-                    _selectedDOB = picked;
-                  });
-                }
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            TextField(
+              decoration: InputDecoration(labelText: 'Patient Name'),
+              onChanged: (value) {
+                setState(() {
+                  _patientName = value;
+                });
               },
             ),
-          ),
-          SizedBox(width: 12.0),
-
-        ],
-      ),
-
-      SizedBox(height: 12.0),
-         Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Gender'),
-          Row(
-            children: [
-              Radio<String>(
-                value: 'Male',
-                groupValue: _selectedGender,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedGender = value!;
-                  });
-                },
-              ),
-              Text('Male'),
-              Radio<String>(
-                value: 'Female',
-                groupValue: _selectedGender,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedGender = value!;
-                  });
-                },
-              ),
-              Text('Female'),
-              Radio<String>(
-                value: 'Other',
-                groupValue: _selectedGender,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedGender = value!;
-                  });
-                },
-              ),
-              Text('Other'),
-            ],
-          ),
-        ],
-      ),
-
-      StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('Users').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return CircularProgressIndicator();
-          List<DropdownMenuItem> doctorDropdownItems = [];
-          for (var Users in snapshot.data!.docs) {
-            String doctorName = Users.get('Name');
-            doctorDropdownItems.add(
-              DropdownMenuItem(
-                child: Text(doctorName),
-                value: doctorName,
-              ),
-            );
-          }
-          return Row(
-            children: <Widget>[
-              Expanded(
-                child: DropdownButton(
-                  items: doctorDropdownItems,
-                  onChanged: (value) async {
-                    setState(() {
-                      _selectedDoctor = value.toString();
-                      _selectedSlot = '';
-                    });
-                    // Refresh slots dropdown
-                    setState(() {});
-                  },
-                  value: _selectedDoctor.isNotEmpty ? _selectedDoctor : null,
-                  hint: Text('Select Doctor'),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-      SizedBox(height: 12.0),
-      // Date selection
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: Text(
-              'Appointment Date: ${DateFormat('EEEE, MMM d, yyyy').format(_selectedDate)}',
+            SizedBox(height: 12.0),
+            TextField(
+              decoration: InputDecoration(labelText: 'Phone Number'),
+              keyboardType: TextInputType.phone,
+              onChanged: (value) {
+                setState(() {
+                  _phoneNo = value;
+                });
+              },
             ),
-          ),
-          ElevatedButton(
-            onPressed: () => _selectDate(context),
-            child: Text('Select Date'),
-          ),
-        ],
-      ),
-      SizedBox(height: 12.0),
-      if (_selectedDoctor.isNotEmpty)
-  StreamBuilder<DocumentSnapshot>(
-    stream: FirebaseFirestore.instance.collection('doctor').doc(_selectedDoctor).snapshots(),
-    builder: (context, snapshot) {
-      if (!snapshot.hasData) return CircularProgressIndicator();
-      if (!snapshot.data!.exists) return Text('No data found');
-      Map<String, dynamic>? availability = (snapshot.data! as DocumentSnapshot<Map<String, dynamic>>).data()?['davail'];
+            SizedBox(height: 12.0),
+            TextField(
+              decoration: InputDecoration(labelText: 'Problem Faced'),
+              onChanged: (value) {
+                setState(() {
+                  _problem = value;
+                });
+              },
+            ),
+            SizedBox(height: 12.0),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(labelText: 'Date of Birth'),
+                    readOnly: true,
+                    controller: TextEditingController(
+                        text: _selectedDOB != null ? DateFormat('yyyy-MM-dd').format(_selectedDOB!) : ''),
+                    onTap: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: _selectedDOB ?? DateTime.now(),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+                      if (picked != null && picked != _selectedDOB) {
+                        setState(() {
+                          _selectedDOB = picked;
+                        });
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(width: 12.0),
+              ],
+            ),
+            SizedBox(height: 12.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Gender'),
+                Row(
+                  children: [
+                    Radio<String>(
+                      value: 'Male',
+                      groupValue: _selectedGender,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedGender = value!;
+                        });
+                      },
+                    ),
+                    Text('Male'),
+                    Radio<String>(
+                      value: 'Female',
+                      groupValue: _selectedGender,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedGender = value!;
+                        });
+                      },
+                    ),
+                    Text('Female'),
+                    Radio<String>(
+                      value: 'Other',
+                      groupValue: _selectedGender,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedGender = value!;
+                        });
+                      },
+                    ),
+                    Text('Other'),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 12.0),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('doctors').snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return CircularProgressIndicator();
+                List<DropdownMenuItem> doctorDropdownItems = [];
+                for (var doctor in snapshot.data!.docs) {
+                  gdoctorName = doctor.get('name');
+                  doctorDropdownItems.add(
+                    DropdownMenuItem(
+                      child: Text(gdoctorName!),
+                      value: gdoctorName,
+                    ),
+                  );
+                }
+                return Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: DropdownButton(
+                        items: doctorDropdownItems,
+                        onChanged: (value) async {
+                          setState(() {
+                            _selectedDoctor = value.toString();
 
-      if (availability == null || availability.isEmpty) {
-        return Text('No slots available');
-      } else {
-        String dayOfWeek = DateFormat('EEEE').format(_selectedDate);
-        String dayKey = '';
-        switch (dayOfWeek) {
-          case 'Monday':
-            dayKey = 'damon';
-            break;
-          case 'Tuesday':
-            dayKey = 'datue';
-            break;
-          case 'Wednesday':
-            dayKey = 'dawed';
-            break;
-          case 'Thursday':
-            dayKey = 'dathu';
-            break;
-          case 'Friday':
-            dayKey = 'dafri';
-            break;
-          case 'Saturday':
-            dayKey = 'dasat';
-            break;
-          case 'Sunday':
-            dayKey = 'dasun';
-            break;
-          default:
-          // Handle invalid day
-            break;
-        }
-        List<String> slots = availability[dayKey]?.cast<String>() ?? [];
-        return DropdownButtonFormField(
-          value: _selectedSlot,
-          hint: Text('Select Slot'),
-          items: slots.map((slot) {
-            return DropdownMenuItem<String>(
-              value: slot,
-              child: Text(slot),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              _selectedSlot = value!;
-            });
-          },
-        );
-      }
-    },
-  ),
-  SizedBox(height: 12.0),
-  ElevatedButton(
-  onPressed: () {
-  // Check if all fields are filled
-  if (_patientName.isNotEmpty &&
-  _phoneNo.isNotEmpty &&
-  _problem.isNotEmpty &&
-  _selectedDoctor.isNotEmpty &&
-  _selectedDOB != null &&
-  _selectedGender.isNotEmpty) {
-  // Generate a unique user_id
-  String userId = DateTime.now().millisecondsSinceEpoch.toString();
-  // Insert data into Firestore
-  appointments.add({
-  'doctor_id': _selectedDoctor, // Reference to doctor_id
-  'user_id': userId,
-    'Name ':_patientName,
-  'status': 'pending',
-  'reason': _problem,
-  'appointment_slot': _selectedSlot,
-  'dob': _selectedDOB,
-  'gender': _selectedGender,
-  'created_at': Timestamp.now(),
-  }).then((_) {
-    openCheckout();
+                            _fetchDoctorInfo(_selectedDoctor);
+                          });
+                        },
+                        value: _selectedDoctor.isNotEmpty ? _selectedDoctor : null,
+                        hint: Text('Select Doctor'),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+            SizedBox(height: 12.0),
+            // Date selection
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    'Appointment Date: ${DateFormat('EEEE, MMM d, yyyy').format(_selectedDate)}',
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () => _selectDate(context),
+                  child: Text('Select Date'),
+                ),
+              ],
+            ),
+            SizedBox(height: 12.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('Select Time Slot'),
+                _buildSlotsButtons(), // Display slots using buttons
+              ],
+            ),
 
-  // Appointment booked successfully
-  Fluttertoast.showToast(msg: 'Appointment booked successfully');
-  // Initiating payment
+            SizedBox(height: 12.0),
 
-  }).catchError((error) {
-  // Error occurred while booking appointment
-    // Error occurred while booking appointment
-    Fluttertoast.showToast(msg: 'Failed to book appointment: $error');
-  });
-
-  } else {
-    Fluttertoast.showToast(msg: 'Please fill all fields');
-  }
-  },
-    child: Text('Book Appointment'),
-  ),
-              SizedBox(height: 12.0),
-              ElevatedButton(
-                onPressed: _downloadReceipt,
-                child: Text('Download Receipt'),
-              ),
-            ],
+            ElevatedButton(
+              onPressed: () {
+                print(doctorId);
+                print(check);
+                // Check if all fields are filled
+                if (_patientName.isNotEmpty &&
+                    _phoneNo.isNotEmpty &&
+                    _problem.isNotEmpty &&
+                    _selectedDoctor.isNotEmpty &&
+                    _selectedDOB != null &&
+                    _selectedGender.isNotEmpty) {
+                  // Generate a unique user_id
+                  String userId = DateTime.now().millisecondsSinceEpoch.toString();
+                  // Insert data into Firestore
+                  appointments.add({
+                    'doctor_id': doctorId,
+                    'user_id': userId,
+                    'Name': _patientName,
+                    'status': 'pending',
+                    'reason': _problem,
+                    'dob': _selectedDOB,
+                    'gender': _selectedGender,
+                    'created_at': Timestamp.now(),
+                  }).then((_) {
+                    openCheckout();
+                    // Appointment booked successfully
+                    Fluttertoast.showToast(msg: 'Appointment booked successfully');
+                    // Initiating payment
+                  }).catchError((error) {
+                    // Error occurred while booking appointment
+                    Fluttertoast.showToast(msg: 'Failed to book appointment: $error');
+                  });
+                } else {
+                  Fluttertoast.showToast(msg: 'Please fill all fields');
+                }
+              },
+              child: Text('Book Appointment'),
+            ),
+            SizedBox(height: 12.0),
+            ElevatedButton(
+              onPressed: _downloadReceipt,
+              child: Text('Download Receipt'),
+            ),
+          ],
         ),
       ),
-  );
-}
+    );
+  }
 
-Future<void> _selectDate(BuildContext context) async {
-  final DateTime? picked = await showDatePicker(
-    context: context,
-    initialDate: _selectedDate,
-    firstDate: DateTime.now(),
-    lastDate: DateTime(2101),
-  );
-  if (picked != null && picked != _selectedDate)
-    setState(() {
-      _selectedDate = picked;
-    });
-}
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+      _fetchWeeklySlots(DateFormat('EEEE').format(_selectedDate));
+    }
+  }
 
-Future<void> _downloadReceipt() async {
-  // Create and save the receipt
-  await _createReceipt();
-  // Show notification for download
-  _showNotificationDownload();
-}
+  void _fetchDoctorInfo(String doctorName) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('doctors')
+          .where('name', isEqualTo: doctorName)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        for (DocumentSnapshot doc in querySnapshot.docs) {
+          doctorId = doc.id;
+          check = doc['name'];
+        }
+      } else {
+        print('Doctor not found');
+      }
+    } catch (e) {
+      print('Error fetching doctor info: $e');
+    }
+  }
+
+
+  void _fetchWeeklySlots(String day) async {
+    try {
+      final DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('doctors')
+          .doc(doctorId) // Assuming doctorId is already set in _fetchDoctorInfo
+          .collection('weekly_slots')
+          .doc(day)
+          .get();
+
+      if (doc.exists) {
+        final List<Map<String, dynamic>> slotsData = List<Map<String, dynamic>>.from(doc['slots'] ?? []);
+        final List<TimeOfDay?> slots = slotsData.map<TimeOfDay?>((slot) {
+          final DateTime time = (slot['time'] as Timestamp).toDate();
+          return TimeOfDay.fromDateTime(time);
+        }).toList();
+        setState(() {
+          _selectedSlots = slots;
+        });
+      } else {
+        setState(() {
+          _selectedSlots = [];
+        });
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      // Handle error
+    }
+  }
+
+  Widget _buildSlotsButtons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: _selectedSlots.map<Widget>((TimeOfDay? slot) {
+        bool isSelected = _selectedSlot == slot; // Check if current slot is selected
+        if (slot != null) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                // Handle slot selection
+                setState(() {
+                  _selectedSlot = slot; // Update selected slot
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isSelected ? Colors.green : null, // Change button color if selected
+              ),
+              child: Text(
+                '${slot.format(context)}',
+                style: TextStyle(
+                  color: isSelected ? Colors.white : null, // Change text color if selected
+                ),
+              ),
+            ),
+          );
+        } else {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text('No slots available'),
+          );
+        }
+      }).toList(),
+    );
+  }
+
+
+
+  Future<void> _downloadReceipt() async {
+    // Create and save the receipt
+    await _createReceipt();
+    // Show notification for download
+    _showNotificationDownload();
+  }
 }
 
 class PdfViewScreen extends StatelessWidget {
@@ -531,4 +517,3 @@ class PdfViewScreen extends StatelessWidget {
     );
   }
 }
-

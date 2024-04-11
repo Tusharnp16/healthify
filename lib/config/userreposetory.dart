@@ -8,7 +8,7 @@ class UserRepository {
 
   Future<void> saveuserrecord(Usermodel user) async {
     try {
-      await db.collection("Patient").doc(user.id).set(user.toJson());
+      await db.collection("huser").doc(user.id).set(user.toJson());
     } on FirebaseException catch (e) {
       throw "Error has been occured";
     } catch (e) {
@@ -17,7 +17,7 @@ class UserRepository {
   }
 
   Future<Usermodel> getuserdetailes(String mobileno) async {
-    final snapshot = await db.collection("Patient").where(
+    final snapshot = await db.collection("huser").where(
         "Mobile", isEqualTo: mobileno).get();
     final userdata = snapshot.docs
         .map((e) => Usermodel.fromSnapshot(e))

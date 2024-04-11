@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:healthify/config/authnication.dart';
 import 'package:healthify/config/usermodel.dart';
 import 'package:healthify/config/userreposetory.dart';
 import 'package:healthify/home.dart';
 import 'package:healthify/navigation_menu.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-
 import 'login.dart';
-import 'config/authnication.dart';
+import 'package:intl/intl.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -40,9 +40,11 @@ class _SignupState extends State<Signup> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-      TextEditingController();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _lnameController = TextEditingController();
+  TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _lnameController = TextEditingController();
+  TextEditingController _dateOfBirthController = TextEditingController();
+  TextEditingController _genderController = TextEditingController();
 
   String? _nameErr;
   String? _lnameErr;
@@ -50,13 +52,15 @@ class _SignupState extends State<Signup> {
   String? _passwordErr;
   String? _confirmPasswordErr;
   String? _phoneNumberErr;
-
-  bool _isPasswordHidden = true;
-  bool _isConfirmPasswordHidden = true;
+  String? _selectedGender;
+  String? _dateOfBirthErr;
+  String? _gendererr;
 
   authnicationfirebase authfirebase = new authnicationfirebase();
   late Usermodel newuser;
   final UserRepository userRepo = new UserRepository();
+  bool _isPasswordHidden = true;
+  bool _isConfirmPasswordHidden = true;
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +102,10 @@ class _SignupState extends State<Signup> {
                         icon: Icons.person_3_rounded,
                       ),
                       SizedBox(height: 20),
+                      _buildGenderField(),
+                      SizedBox(height: 20),
+                      _buildDateOfBirthField(),
+                      SizedBox(height: 20),
                       _buildPhoneNumberField(),
                       SizedBox(height: 20),
                       _buildTextInput(
@@ -129,26 +137,7 @@ class _SignupState extends State<Signup> {
                       ),
                       SizedBox(height: 30),
                       ElevatedButton(
-                        onPressed: () => [
-                          _validateAndNavigate,
-                          authfirebase.registewithemailandpassword(
-                              _emailController.text.trim(),
-                              _confirmPasswordController.text.trim()),
-                          newuser = Usermodel(
-                              mobile: _phoneNumberController.text.trim(),
-                              firstname: _nameController.text.trim(),
-                              lastname: _lnameController.text.trim(),
-                              email: _emailController.text.trim()),
-                          userRepo.saveuserrecord(newuser).then((value) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const NavigationMenu()));
-                          }),
-                        ],
-                        // [rollDice(),rollDice2()],
-
+                        onPressed: _validateAndNavigate,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(220, 115, 208, 239),
                           shape: RoundedRectangleBorder(
@@ -208,21 +197,152 @@ class _SignupState extends State<Signup> {
     );
   }
 
-  Widget _buildPhoneNumberField() {
-    return InternationalPhoneNumberInput(
-      textFieldController: _phoneNumberController,
-      onInputChanged: _validatePhoneNumber,
-      selectorConfig: SelectorConfig(
-        selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+  Widget _buildGenderField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.person_outline, color: Colors.blue),
+            SizedBox(height: 8, width: 20),
+            Text(
+              'Gender',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8, width: 20),
+            Radio(
+              value: 'male',
+              groupValue: _selectedGender,
+              onChanged: (value) {
+                setState(() {
+                  _selectedGender = value.toString();
+                  _genderController.text = value.toString();
+                });
+              },
+            ),
+            Text('Male'),
+            SizedBox(width: 20),
+            Radio(
+              value: 'female',
+              groupValue: _selectedGender,
+              onChanged: (value) {
+                setState(() {
+                  _selectedGender = value.toString();
+                  _genderController.text = value.toString();
+                });
+              },
+            ),
+            Text('Female'),
+          ],
+        ),
+        if (_gendererr != null)
+          Text(
+            _gendererr!,
+            style: TextStyle(color: Colors.red, fontSize: 12),
+          ),
+      ],
+    );
+  }
+
+
+
+  Widget _buildDateOfBirthField() {
+    return GestureDetector(
+      onTap: () async {
+        final DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(1900),
+          lastDate: DateTime.now(),
+        );
+        if (pickedDate != null) {
+          final formattedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
+          setState(() {
+            _dateOfBirthController.text = formattedDate;
+          });
+        }
+      },
+      child: AbsorbPointer(
+        child: TextFormField(
+          controller: _dateOfBirthController,
+          decoration: InputDecoration(
+            labelText: 'Date of Birth (DD/MM/YYYY)',
+            prefixIcon: Icon(Icons.calendar_today),
+            hintText: 'DD/MM/YYYY',
+            errorText: _dateOfBirthErr,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue, width: 2),
+              borderRadius: BorderRadius.circular(25),
+            ),
+          ),
+          keyboardType: TextInputType.datetime,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your date of birth';
+            }
+            // Validate the format of the date
+            if (!_isDateValid(value)) {
+              return 'Please enter a valid date in DD/MM/YYYY format';
+            }
+            return null;
+          },
+          onChanged: (value) {
+            setState(() {
+              _dateOfBirthErr = null;
+            });
+          },
+        ),
       ),
-      ignoreBlank: false,
-      autoValidateMode: AutovalidateMode.onUserInteraction,
-      formatInput: false,
-      keyboardType: TextInputType.phone,
-      inputBorder: _inputBorderStyle(),
-      errorMessage: _phoneNumberErr,
-      hintText: 'Phone Number',
-      initialValue: PhoneNumber(isoCode: 'IN'),
+    );
+  }
+
+
+  bool _isDateValid(String value) {
+    final datePattern =
+        r'^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)(\d{4})$';
+    return RegExp(datePattern).hasMatch(value);
+  }
+
+  Widget _buildPhoneNumberField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 8),
+        IntlPhoneField(
+          decoration: InputDecoration(
+            labelText: 'Phone Number',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(25.0),
+              borderSide: const BorderSide(
+                color: Colors.blue,
+              ),
+            ),
+          ),
+          initialCountryCode: 'IN',
+          onChanged: (phone) {
+            // Handle phone number change
+          },
+          onCountryChanged: (phone) {
+            // Handle country code change
+          },
+          controller: _phoneNumberController,
+          validator: (value) {
+            if (value == null) {
+              return 'Phone number cannot be empty';
+            }
+            return null;
+          },
+        ),
+        if (_phoneNumberErr != null)
+          Text(
+            _phoneNumberErr!,
+            style: TextStyle(color: Colors.red, fontSize: 12),
+          ),
+      ],
     );
   }
 
@@ -288,9 +408,9 @@ class _SignupState extends State<Signup> {
       _nameErr = value.isEmpty
           ? 'Enter Your First Name'
           : (RegExp(r'^[a-zA-Z]+$').hasMatch(value)
-                  ? null
-                  : 'Invalid characters. Please use only letters and spaces.') ??
-              (value.length < 2 ? 'Invalid Length' : null);
+          ? null
+          : 'Invalid characters. Please use only letters and spaces.') ??
+          (value.length < 2 ? 'Invalid Length' : null);
     });
   }
 
@@ -299,9 +419,9 @@ class _SignupState extends State<Signup> {
       _lnameErr = value.isEmpty
           ? 'Enter Your Last Name'
           : (RegExp(r'^[a-zA-Z]+$').hasMatch(value)
-                  ? null
-                  : 'Invalid characters. Please use only letters and spaces.') ??
-              (value.length < 2 ? 'Invalid Length' : null);
+          ? null
+          : 'Invalid characters. Please use only letters and spaces.') ??
+          (value.length < 2 ? 'Invalid Length' : null);
     });
   }
 
@@ -329,9 +449,9 @@ class _SignupState extends State<Signup> {
     setState(() {
       _confirmPasswordController.value =
           _confirmPasswordController.value.copyWith(
-        text: value,
-        selection: TextSelection.collapsed(offset: value.length),
-      );
+            text: value,
+            selection: TextSelection.collapsed(offset: value.length),
+          );
       _confirmPasswordErr = _validateConfirmPasswordRules(value);
     });
   }
@@ -376,12 +496,12 @@ class _SignupState extends State<Signup> {
     });
   }
 
-  void _validatePhoneNumber(PhoneNumber phoneNumber) {
+  void _validatePhoneNumber(String phoneNumber) {
     setState(() {
-      if (phoneNumber.phoneNumber == null || phoneNumber.phoneNumber!.isEmpty) {
+      if (phoneNumber.isEmpty) {
         _phoneNumberErr = 'Phone number cannot be empty';
-      } else if (phoneNumber.phoneNumber!.length != 13) {
-        _phoneNumberErr = phoneNumber.phoneNumber!.length < 13
+      } else if (phoneNumber.length != 13) {
+        _phoneNumberErr = phoneNumber.length < 13
             ? 'Invalid Phone number...too short'
             : 'Phone number cannot exceed 10 digits';
       } else {
@@ -393,24 +513,57 @@ class _SignupState extends State<Signup> {
     });
   }
 
-  void _validateAndNavigate() {
+  void _validateAndNavigate() async {
     _validateName(_nameController.text);
     _validateLastName(_lnameController.text);
     _validateEmail(_emailController.text);
     _validatePassword(_passwordController.text);
     _validateConfirmPassword(_confirmPasswordController.text);
-
     if (_nameErr == null &&
         _lnameErr == null &&
         _emailErr == null &&
         _phoneNumberErr == null &&
         _passwordErr == null &&
-        _confirmPasswordErr == null) {
-      // All fields are error-free, navigate to the login page
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const loginscreen()),
-      );
+        _confirmPasswordErr == null &&
+        _selectedGender != null &&
+        _dateOfBirthErr == null) {
+      // All fields are error-free, continue with Firebase authentication
+      try {
+        final Usermodel newUser = Usermodel(
+          mobile: _phoneNumberController.text.trim(),
+          firstname: _nameController.text.trim(),
+          lastname: _lnameController.text.trim(),
+          email: _emailController.text.trim(),
+          // dob: DateTime.parse(_dateOfBirthController.text),
+          gender: _selectedGender!,
+        );
+        await authfirebase.registewithemailandpassword(
+            _emailController.text.trim(),
+            _confirmPasswordController.text.trim());
+        await userRepo.saveuserrecord(newUser);
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const NavigationMenu()));
+      } catch (e) {
+        print('Error occurred: $e');
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text('An error occurred. Please try again later.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
     } else {
       // Display a dialog or message to inform the user about validation errors
       showDialog(
@@ -418,7 +571,8 @@ class _SignupState extends State<Signup> {
         builder: (context) {
           return AlertDialog(
             title: Text('Validation Error'),
-            content: Text('Please fix the highlighted errors and try again.'),
+            content:
+            Text('Please fix the highlighted errors and try again.'),
             actions: [
               TextButton(
                 onPressed: () {

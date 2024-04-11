@@ -20,8 +20,8 @@ class NavigationMenu extends StatefulWidget {
 class _NavigationMenuState extends State<NavigationMenu> {
   int _selectedIndex = 0;
   List<Widget> widgetOptions = <Widget>[
-    home(),
-    Doctor(),
+    Home(),
+    DoctorListPage(),
     option(),// to add the Hospital page in this u have write all the field
     more()
   ];

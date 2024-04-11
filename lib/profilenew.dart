@@ -10,7 +10,7 @@ class FirestoreService {
     return _auth.authStateChanges().asyncExpand((User? user) {
       if (user != null) {
         return _firestore
-            .collection('Patient')
+            .collection('huser')
             .doc(user.uid)
             .snapshots(includeMetadataChanges: true);
       } else {

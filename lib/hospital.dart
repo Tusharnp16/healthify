@@ -1,161 +1,124 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+class HospitalListPage extends StatelessWidget {
+  const HospitalListPage({Key? key}) : super(key: key);
 
-class Hospitals {
-  final String name;
-  final String email;
-  final String phoneNumber;
-  final List<dynamic> photoUrl;
-  final String website;
-  final String description;
-  final List<dynamic> specialties;
-  final List<dynamic> history;
-  final Address address;
-
-  Hospitals({
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
-    required this.photoUrl,
-    required this.website,
-    required this.description,
-    required this.specialties,
-    required this.history,
-    required this.address,
-  });
-}
-
-class Address {
-  final List<dynamic> hAdd;
-  final List<dynamic> hCity;
-  final List<dynamic> hLoc; // Updated to handle GeoPoint as part of an array
-  final List<dynamic> hState;
-
-  Address({
-    required this.hAdd,
-    required this.hCity,
-    required this.hLoc,
-    required this.hState,
-  });
-}
-
-Future<List<Hospitals>> fetchHospitals() async {
-  try {
-    final hospitals = await FirebaseFirestore.instance.collection('hospitals').get();
-
-    return hospitals.docs.map((doc) {
-      return Hospitals(
-        name: doc['hname'],
-        email: doc['hemail'],
-        phoneNumber: doc['hphn'],
-        photoUrl: List<String>.from(doc['hphoto']),
-        website: doc['hweb'],
-        description: doc['hdescrip'],
-        history: List<String>.from(doc['hhistory']),
-        specialties: List<String>.from(doc['hspecial']),
-        address: Address(
-          hAdd: List<dynamic>.from(doc['hlocation'][0]['hadd']),
-          hCity: List<dynamic>.from(doc['hlocation'][0]['hcity']),
-          hLoc: List<dynamic>.from(doc['hlocation'][0]['hloc']), // Accessing GeoPoint as part of an array
-          hState: List<dynamic>.from(doc['hlocation'][0]['hstate']),
-        ),
-      );
-    }).toList();
-  } catch (e) {
-    print('Error fetching hospitals: $e');
-    return [];
-  }
-}
-// Import your HospitalDetailsScreen here
-
-class HospitalScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hospitals'),
+        title: const Text('Hospital List'),
       ),
-      body: FutureBuilder<List<Hospitals>>(
-        future: fetchHospitals(),
-        builder: (context, snapshot) {
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('hospitals').snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            final hospitals = snapshot.data!;
-            return ListView.builder(
-              itemCount: hospitals.length,
-              itemBuilder: (context, index) {
-                final hospital = hospitals[index];
-                final imageUrl = hospital.photoUrl.isNotEmpty ? hospital.photoUrl[0] : '';
-                final locationCount = hospital.address.hLoc.length;
-                return Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue, width: 1.0),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                  child: ListTile(
-                    title: Text(hospital.name),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Specialties',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 4),
-                        Wrap(
-                          spacing: 8.0,
-                          children: hospital.specialties.map((specialty) {
-                            return Chip(
-                              label: Text(specialty),
-                            );
-                          }).toList(),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Address:',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text('City: ${hospital.address.hCity[0]}, State: ${hospital.address.hState[0]}'),
-                        SizedBox(height: 8),
-                        Text(
-                          'Number of Locations: $locationCount',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HospitalDetailsScreen(hospital: hospital),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            );
+            return const Center(child: CircularProgressIndicator());
           }
+          if (snapshot.hasError) {
+            // Handle errors
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          final List<Hospital> hospitals = snapshot.data!.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return Hospital(
+              id: doc.id, // Add document ID
+              name: data['name'],
+              imageUrl: data['imageUrl'] ?? '', // Null check for imageUrl
+              description: data['description'],
+              address: data['address'],
+              website: data['website'],
+              email: data['email'],
+              phoneNumber: data['phoneNumber'],
+            );
+          }).toList();
+          return ListView.builder(
+            itemCount: hospitals.length,
+            itemBuilder: (context, index) {
+              final hospital = hospitals[index];
+              return ListTile(
+                title: Text(hospital.name),
+                leading: hospital.imageUrl.isNotEmpty
+                    ? Image.network(
+                  hospital.imageUrl,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    // Handle image loading errors
+                    return Icon(Icons.error);
+                  },
+                )
+                    : const SizedBox.shrink(),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HospitalDetailsPage(hospital: hospital),
+                    ),
+                  );
+                },
+              );
+            },
+          );
         },
       ),
     );
   }
 }
 
+class HospitalDetailsPage extends StatelessWidget {
+  final Hospital hospital;
 
+  const HospitalDetailsPage({Key? key, required this.hospital}) : super(key: key);
 
+  Future<void> _deleteHospital(BuildContext context) async {
+    try {
+      bool deleteConfirmed = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Delete Hospital?'),
+          content: Text('Are you sure you want to delete ${hospital.name}?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false); // Cancel deletion
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true); // Confirm deletion
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        ),
+      );
 
-
-
-
-class HospitalDetailsScreen extends StatelessWidget {
-  final Hospitals hospital;
-
-  HospitalDetailsScreen({required this.hospital});
+      if (deleteConfirmed != null && deleteConfirmed) {
+        await FirebaseFirestore.instance.collection('hospitals').doc(hospital.id).delete(); // Use document ID
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Hospital deleted successfully'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (error) {
+      // Handle errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${error.toString()}'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,140 +126,85 @@ class HospitalDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(hospital.name),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.blue, width: 2.0),
-        ),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (hospital.photoUrl.isNotEmpty)
-                _buildBorderContainer(
-                  child: Image.network(
-                    hospital.photoUrl[0],
-                    height: 200,
-                    width: MediaQuery.of(context).size.width,
-                    fit: BoxFit.cover,
-                  ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (hospital.imageUrl.isNotEmpty)
+            Image.network(
+              hospital.imageUrl,
+              width: MediaQuery.of(context).size.width,
+              height: 200,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                // Handle image loading errors
+                return Icon(Icons.error);
+              },
+            ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Description:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              SizedBox(height: 20),
-              _buildBorderContainer(
-                child: Text(
-                  'Email: ${hospital.email}',
-                  style: TextStyle(fontSize: 18),
+                Text(hospital.description),
+                SizedBox(height: 10),
+                Text(
+                  'Address:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-              SizedBox(height: 10),
-              _buildBorderContainer(
-                child: Text(
-                  'Phone: ${hospital.phoneNumber}',
-                  style: TextStyle(fontSize: 18),
+                Text(hospital.address),
+                SizedBox(height: 10),
+                Text(
+                  'Website:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-              SizedBox(height: 10),
-              _buildBorderContainer(
-                child: Text(
-                  'Website: ${hospital.website}',
-                  style: TextStyle(fontSize: 18),
+                Text(hospital.website),
+                SizedBox(height: 10),
+                Text(
+                  'Email:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-              SizedBox(height: 20),
-              _buildBorderContainer(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Description:',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      hospital.description,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
+                Text(hospital.email),
+                SizedBox(height: 10),
+                Text(
+                  'Phone Number:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-              SizedBox(height: 20),
-              _buildBorderContainer(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Specialties:',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8.0,
-                      children: hospital.specialties.map((specialty) {
-                        return Chip(
-                          label: Text(specialty),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              _buildBorderContainer(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'History:',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      hospital.history.join('\n'),
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              _buildBorderContainer(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Address:',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 10),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: hospital.address.hLoc.length,
-                      itemBuilder: (context, index) {
-                        return Text('${hospital.address.hAdd[index]}, City: ${hospital.address.hCity[index]}, State: ${hospital.address.hState[index]} Latitude: ${hospital.address.hLoc[index].latitude}, Longitude: ${hospital.address.hLoc[index].longitude}');
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
+                Text(hospital.phoneNumber),
+              ],
+            ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBorderContainer({required Widget child}) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 20.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.blue, width: 1.0),
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(12.0),
-        child: child,
+          ElevatedButton(
+            onPressed: () => _deleteHospital(context),
+            child: Text('Delete'),
+          ),
+        ],
       ),
     );
   }
 }
 
+class Hospital {
+  final String id; // Document ID
+  final String name;
+  final String imageUrl;
+  final String description;
+  final String address;
+  final String website;
+  final String email;
+  final String phoneNumber;
 
+  Hospital({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.description,
+    required this.address,
+    required this.website,
+    required this.email,
+    required this.phoneNumber,
+  });
+}

@@ -1,147 +1,184 @@
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'doctorDetails.dart';
 
-class Doctor extends StatefulWidget {
-  const Doctor({Key? key});
-
-  @override
-  State<Doctor> createState() => _DoctorState();
+void main() {
+  runApp(MyApp());
 }
 
-class _DoctorState extends State<Doctor> {
-  Future<Uint8List?> _getImage(String url) async {
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        return response.bodyBytes;
-      } else {
-        print('Failed to load image with status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error loading image: $e');
-    }
-    return null;
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Doctor List',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: DoctorListPage(),
+    );
   }
+}
+
+class DoctorListPage extends StatefulWidget {
+  @override
+  _DoctorListPageState createState() => _DoctorListPageState();
+}
+
+class _DoctorListPageState extends State<DoctorListPage> {
+  ViewOption _viewOption = ViewOption.listView;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('List of Doctors'),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem(
+                child: Text('List View'),
+                value: ViewOption.listView,
+              ),
+              PopupMenuItem(
+                child: Text('Grid View'),
+                value: ViewOption.gridView,
+              ),
+            ],
+            onSelected: (ViewOption option) {
+              setState(() {
+                _viewOption = option;
+              });
+            },
+          ),
+        ],
+      ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection("Users").snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, index) {
-                  var doctorData = snapshot.data!.docs[index].data();
-                  return DoctorItem(
-                    doctorData: doctorData,
-                    getImage: _getImage,
-                  );
-                },
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text(snapshot.error.toString()),
-              );
-            }
+        stream: FirebaseFirestore.instance.collection('doctors').snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
           }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Text('No doctors found.'),
+            );
+          }
+
+          List<QueryDocumentSnapshot<Map<String, dynamic>>> doctorDocs = snapshot.data!.docs.map((doc) => doc as QueryDocumentSnapshot<Map<String, dynamic>>).toList();
+
+          return _viewOption == ViewOption.listView
+              ? _buildListView(doctorDocs)
+              : _buildGridView(doctorDocs);
         },
       ),
     );
   }
-}
 
-class DoctorItem extends StatefulWidget {
-  final Map<String, dynamic> doctorData;
-  final Future<Uint8List?> Function(String) getImage;
-
-  const DoctorItem({Key? key, required this.doctorData, required this.getImage}) : super(key: key);
-
-  @override
-  State<DoctorItem> createState() => _DoctorItemState();
-}
-
-
-class _DoctorItemState extends State<DoctorItem> {
-  bool _showFullDetails = false;
-  Uint8List? _imageBytes;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadImage();
+  Widget _buildListView(List<QueryDocumentSnapshot<Map<String, dynamic>>> doctors) {
+    return ListView.builder(
+      itemCount: doctors.length,
+      itemBuilder: (context, index) {
+        var doctorSnapshot = doctors[index];
+        var doctorData = doctorSnapshot.data();
+        if (doctorData == null || doctorData.isEmpty) {
+          return SizedBox.shrink(); // Skip rendering empty or null data
+        }
+        return DoctorListItem(
+          doctorData: doctorData,
+          onTap: () => _navigateToDoctorDetail(doctorSnapshot),
+        );
+      },
+    );
   }
 
-  Future<void> _loadImage() async {
-    if (widget.doctorData["image_url"] != null) {
-      Uint8List? bytes = await widget.getImage(widget.doctorData["image_url"]);
-      setState(() {
-        _imageBytes = bytes;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: _imageBytes != null ? MemoryImage(_imageBytes!) : null,
+  Widget _buildGridView(List<QueryDocumentSnapshot<Map<String, dynamic>>> doctors) {
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 8.0,
       ),
-      title: Text("${widget.doctorData["Name"] ?? ""}"),
-      subtitle: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Specialist: ${widget.doctorData["Specialist"] ?? ""}"),
-          _showFullDetails
-              ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Mobile: ${widget.doctorData["Mobile"] ?? ""}"),
-              Text("Gender: ${widget.doctorData["Gender"] ?? ""}"),
-              Text("Email: ${widget.doctorData["Email"] ?? ""}"),
-              Text("Hospital: ${widget.doctorData["Hospital"] ?? ""}"),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _showFullDetails = false;
-                  });
-                },
-                child: Text(
-                  'Show Less',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          )
-              : GestureDetector(
-            onTap: () {
-              setState(() {
-                _showFullDetails = true;
-              });
-            },
-            child: Text(
-              'Show More',
-              style: TextStyle(
-                color: Colors.blue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+      itemCount: doctors.length,
+      itemBuilder: (context, index) {
+        var doctorSnapshot = doctors[index];
+        var doctorData = doctorSnapshot.data();
+        if (doctorData == null || doctorData.isEmpty) {
+          return SizedBox.shrink(); // Skip rendering empty or null data
+        }
+        return DoctorListItem(
+          doctorData: doctorData,
+          onTap: () => _navigateToDoctorDetail(doctorSnapshot),
+        );
+      },
+    );
+  }
+
+  void _navigateToDoctorDetail(QueryDocumentSnapshot<Map<String, dynamic>> doctorSnapshot) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DoctorDetailPage(doctorSnapshot: doctorSnapshot),
       ),
     );
   }
 }
 
+enum ViewOption {
+  listView,
+  gridView,
+}
+
+class DoctorListItem extends StatelessWidget {
+  final Map<String, dynamic> doctorData;
+  final VoidCallback onTap;
+
+  const DoctorListItem({
+    Key? key,
+    required this.doctorData,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        margin: EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: doctorData['imageUrl'] != null
+                    ? Image.network(
+                  doctorData['imageUrl'],
+                  fit: BoxFit.cover,
+                )
+                    : Placeholder(), // Placeholder image if imageUrl is null
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                doctorData['name'] ?? 'Unknown',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

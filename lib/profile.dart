@@ -22,7 +22,7 @@ class Profile extends StatelessWidget {
     return Scaffold(
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection('Patient')
+            .collection('huser')
             .doc(Email) // Assuming 'users' is the collection name
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -221,7 +221,7 @@ class FirestoreService {
     if (email != null) {
       // Query Firestore to get data associated with the current user's email
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
-          .collection('Patient') // Replace 'your_collection_name' with your Firestore collection name
+          .collection('huser') // Replace 'your_collection_name' with your Firestore collection name
           .where('email', isEqualTo: email)
           .get();
 
