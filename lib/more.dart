@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:healthify/ambulance.dart';
+import 'package:healthify/constants.dart';
 import 'package:healthify/faq.dart';
 import 'package:healthify/login.dart';
 import 'package:healthify/logout.dart';
@@ -8,15 +10,20 @@ import 'package:healthify/feedback.dart';
 import 'package:healthify/contactus.dart';
 import 'package:healthify/emergancy.dart';
 import 'package:healthify/profilenew.dart';
+import 'package:http/http.dart';
+import 'cancelappoiment.dart';
 import 'chatbot.dart';
 import 'package:healthify/Aboutus.dart';
 import 'package:healthify/profile.dart';
 
 import 'config/privacy.dart';
 import 'config/termsandcon.dart';
+import 'notification.dart';
 
 
 class more extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +39,7 @@ class more extends StatelessWidget {
                     child: Image.asset('assets/images/admin.jpg',
                         fit: BoxFit.cover),
                   ),
-                  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> UserProfileScreen()));}
+                  onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> profile()));}
 
               ),
             ),
@@ -42,6 +49,18 @@ class more extends StatelessWidget {
               trailing: Icon(Icons.chat),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=> ChatScreenPage()));
+              },),
+            ListTile(
+              title: Text("NOtification"),
+              trailing: Icon(Icons.notifications),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>   CancelRequestsForUserScreen()));
+              },),
+            ListTile(
+              title: Text("Cancel Appoiment"),
+              trailing: Icon(Icons.notifications),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>   AppointmentListPage(phoneNumber:globalMobile.toString(),)));
               },),
             ListTile(
               title: Text("Ambulance"),
@@ -120,8 +139,13 @@ class more extends StatelessWidget {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=> loginscreen()));
               },
             ),
+
           ],
         )
     );
   }
 }
+
+
+
+
