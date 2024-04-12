@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -465,16 +466,22 @@ class _loginscreenState extends State<loginscreen> {
         // Navigate only if authentication is successful
         if (value != null) {
           // Fetch user data and store it in global variables
-          authfirebase.getUserData(emailcontroller.text.trim()).then((userData) {
+          authfirebase.getUserData(emailcontroller.text.trim()).then((userData) async {
             if (userData != null) {
               globalEmailID = userData['Email'];
-              globalDocID = value.user?.uid;
+              QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                  .collection('huser')
+                  .where('Email', isEqualTo: globalEmailID)
+                  .get();
+              globalDocID = querySnapshot.docs.first.id;
               globalFName = userData['First Name'];
               globalLName = userData['Last name'];
-              globalMobile = userData['Mobile'];
+               globalMobile = userData['Mobile'];
               globalGender =userData['Gender'];
               print(globalEmailID);
               print(globalDocID);
+              print(globalDocIDD);
+              print(globalDocIDDD);
               print(globalFName);
               print(globalMobile);
               print(globalGender);

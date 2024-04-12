@@ -34,6 +34,7 @@ class _NavigationMenuState extends State<NavigationMenu> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: const Icon(Icons.notifications),
         backgroundColor: Color.fromARGB(220, 59, 206, 255),
         title: const Text(
           "Healthify",

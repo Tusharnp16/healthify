@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:healthify/hospital.dart';
 
 import 'doctor.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class option extends StatelessWidget {
   @override
@@ -47,6 +48,23 @@ class option extends StatelessWidget {
                     const SizedBox(
                       height: 5,
                     ),
+
+                    IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context, MaterialPageRoute(builder: (context) => DoctorListPage()));
+                        },
+                        icon: Image.asset("assets/images/lab.jpg")),
+                    const Text(
+                      "Lab",
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
             
             IconButton(
                 onPressed: () {
@@ -70,3 +88,5 @@ class option extends StatelessWidget {
         ));
   }
 }
+
+

@@ -10,12 +10,14 @@ import 'config/util.dart';
 import 'login.dart';
 import 'constants.dart';
 
-class Profile extends StatelessWidget {
-  
-  final String userId;
-  String? Email=globalEmailID;
+class profile extends StatelessWidget {
 
-  Profile({required this.userId});
+  String? gdocid=globalDocID;
+initState()
+{
+  print(gdocid);
+}
+
   final controller = Get.put(ImagePickerController());
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class Profile extends StatelessWidget {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('huser')
-            .doc(Email) // Assuming 'users' is the collection name
+            .doc(gdocid) // Assuming 'users' is the collection name
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasError) {
@@ -35,6 +37,7 @@ class Profile extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data!.data() == null) {
+            print("hfjdhjkk ::: :::: ${gdocid}");
             return Text('No data found for this user.');
           }
 
@@ -46,8 +49,12 @@ class Profile extends StatelessWidget {
           var email = userData['Email'] as String?;
           var mobile = userData['Mobile'] as String?;
           var last = userData['Last name'] as String?;
+          var Gender = userData['Gender'] as String?;
 
-
+print(name);
+          print(email);
+          print(mobile);
+          print(last);
           return SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,

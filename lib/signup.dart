@@ -155,6 +155,7 @@ class _SignupState extends State<Signup> {
                           ),
                         ),
                       ),
+                      SizedBox(height: 30),
                     ],
                   ),
                 ),
