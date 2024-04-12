@@ -5,17 +5,17 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'bookAppointment.dart';
-class HospitalListPage extends StatelessWidget {
-  const HospitalListPage({Key? key}) : super(key: key);
+class PhysioListPage extends StatelessWidget {
+  const PhysioListPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hospital List'),
+        title: const Text('Physio List'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('hospitals').snapshots(),
+        stream: FirebaseFirestore.instance.collection('Physio').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -59,7 +59,7 @@ class HospitalListPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => HospitalDetailsPage(hospital: hospital),
+                      builder: (context) => PhysioDetailsPage(hospital: hospital),
                     ),
                   );
                 },
@@ -72,10 +72,10 @@ class HospitalListPage extends StatelessWidget {
   }
 }
 
-class HospitalDetailsPage extends StatelessWidget {
+class PhysioDetailsPage extends StatelessWidget {
   final Hospital hospital;
 
-  const HospitalDetailsPage({Key? key, required this.hospital}) : super(key: key);
+  const PhysioDetailsPage({Key? key, required this.hospital}) : super(key: key);
 
   Future<void> _deleteHospital(BuildContext context) async {
     try {

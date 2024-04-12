@@ -5,8 +5,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'bookAppointment.dart';
-class HospitalListPage extends StatelessWidget {
-  const HospitalListPage({Key? key}) : super(key: key);
+
+class labListPage extends StatelessWidget {
+  const labListPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class HospitalListPage extends StatelessWidget {
         title: const Text('Hospital List'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('hospitals').snapshots(),
+        stream: FirebaseFirestore.instance.collection('labs').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -35,6 +36,7 @@ class HospitalListPage extends StatelessWidget {
               website: data['website'],
               email: data['email'],
               phoneNumber: data['phoneNumber'],
+              location: data['location'] as GeoPoint, // Fetch location as GeoPoint
             );
           }).toList();
           return ListView.builder(
@@ -43,6 +45,9 @@ class HospitalListPage extends StatelessWidget {
               final hospital = hospitals[index];
               return ListTile(
                 title: Text(hospital.name),
+                subtitle: Text(
+                  'Latitude: ${hospital.location.latitude}, Longitude: ${hospital.location.longitude}',
+                ),
                 leading: hospital.imageUrl.isNotEmpty
                     ? Image.network(
                   hospital.imageUrl,
@@ -59,7 +64,7 @@ class HospitalListPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => HospitalDetailsPage(hospital: hospital),
+                      builder: (context) => labDetailsPage(hospital: hospital),
                     ),
                   );
                 },
@@ -72,55 +77,10 @@ class HospitalListPage extends StatelessWidget {
   }
 }
 
-class HospitalDetailsPage extends StatelessWidget {
+class labDetailsPage extends StatelessWidget {
   final Hospital hospital;
 
-  const HospitalDetailsPage({Key? key, required this.hospital}) : super(key: key);
-
-  Future<void> _deleteHospital(BuildContext context) async {
-    try {
-      bool deleteConfirmed = await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Delete Hospital?'),
-          content: Text('Are you sure you want to delete ${hospital.name}?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, false); // Cancel deletion
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context, true); // Confirm deletion
-              },
-              child: Text('Delete'),
-            ),
-          ],
-        ),
-      );
-
-      if (deleteConfirmed != null && deleteConfirmed) {
-        await FirebaseFirestore.instance.collection('hospitals').doc(hospital.id).delete(); // Use document ID
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Hospital deleted successfully'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      }
-    } catch (error) {
-      // Handle errors
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${error.toString()}'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
-  }
+  const labDetailsPage({Key? key, required this.hospital}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -177,6 +137,14 @@ class HospitalDetailsPage extends StatelessWidget {
                 ),
                 Text(hospital.phoneNumber),
                 SizedBox(height: 10),
+                Text(
+                  'Location:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'Latitude: ${hospital.location.latitude}, Longitude: ${hospital.location.longitude}',
+                ),
+                SizedBox(height: 10),
                 Container(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -213,6 +181,7 @@ class Hospital {
   final String website;
   final String email;
   final String phoneNumber;
+  final GeoPoint location; // Location as GeoPoint
 
   Hospital({
     required this.id,
@@ -223,5 +192,6 @@ class Hospital {
     required this.website,
     required this.email,
     required this.phoneNumber,
+    required this.location,
   });
 }
